@@ -1,0 +1,33 @@
+syntax = "v1"
+
+info(
+    title: "type title here"
+    desc: "type desc here"
+    author: "type author here"
+    email: "type email here"
+    version: "type version here"
+)
+
+
+type(
+    User {
+        Id             uint32 `json:"id"`
+        Username       string `json:"username"`
+        Nickname       string `json:"nickname"`
+        Avatar         string `json:"avatar"`
+        Gender         uint32 `json:"gender"`
+        Role           uint32 `json:"role"`
+        FollowerCount  int    `json:"follower_count"`
+        FollowingCount int    `json:"following_count"`
+        LikeCount      int    `json:"like_count"`
+        StarCount      int    `json:"star_count"`
+        SelfStarCount  int    `json:"self_star_count"`
+        SelfLikeCount  int    `json:"self_like_count"`
+        LiveCount      int    `json:"live_count"`
+        WorkCount      int    `json:"work_count"`
+        FriendCount    int    `json:"friend_count"`
+        Phone          string `json:"phone"`
+        Email          string `json:"email"`
+        Status          uint  `json:"status"`
+    }
+)

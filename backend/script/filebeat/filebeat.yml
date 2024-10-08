@@ -1,0 +1,9 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/app/*.log
+
+output.kafka:
+  hosts: ["kafka:9092"]
+  topic: "app-logs"
