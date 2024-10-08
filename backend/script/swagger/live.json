@@ -1,0 +1,980 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "type title here",
+    "description": "type desc here",
+    "version": "type version here"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/live/comment": {
+      "post": {
+        "summary": "直播评论",
+        "operationId": "LiveComment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LiveCommentResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 直播评论",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LiveCommentReq"
+            }
+          }
+        ],
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/live/delete/comment": {
+      "post": {
+        "summary": "直播评论删除",
+        "operationId": "LiveDeleteComment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LiveCommentResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LiveDeleteCommentReq"
+            }
+          }
+        ],
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/live/end": {
+      "post": {
+        "summary": "结束直播",
+        "operationId": "EndLive",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LiveDetailResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 结束直播",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EndLiveReq"
+            }
+          }
+        ],
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/live/info": {
+      "post": {
+        "summary": "直播信息",
+        "operationId": "LiveInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LiveDetailResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 直播详情",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LiveDetailReq"
+            }
+          }
+        ],
+        "tags": [
+          "common"
+        ]
+      }
+    },
+    "/v1/live/like": {
+      "post": {
+        "summary": "直播点赞",
+        "operationId": "LiveLike",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LiveLikeResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 直播点赞",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LiveLikeReq"
+            }
+          }
+        ],
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/live/list/comment": {
+      "post": {
+        "summary": "直播评论列表",
+        "operationId": "LiveCommentList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LiveCommentListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 直播评论列表",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LiveCommentListReq"
+            }
+          }
+        ],
+        "tags": [
+          "common"
+        ]
+      }
+    },
+    "/v1/live/list/gorse": {
+      "post": {
+        "summary": "直播列表",
+        "operationId": "LiveListByGorse",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LiveListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LiveListReq"
+            }
+          }
+        ],
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/live/list/liveinfo": {
+      "post": {
+        "summary": "直播列表",
+        "operationId": "LiveList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LiveListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LiveListReq"
+            }
+          }
+        ],
+        "tags": [
+          "common"
+        ]
+      }
+    },
+    "/v1/live/start": {
+      "post": {
+        "summary": "开启直播",
+        "operationId": "StartLive",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LiveDetailResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 开始直播",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StartLiveReq"
+            }
+          }
+        ],
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/live/zlmediakit/onPublicStream": {
+      "post": {
+        "summary": "推流回调",
+        "operationId": "OnPublicStream",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/OnPublicStreamResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OnPublicStreamReq"
+            }
+          }
+        ],
+        "tags": [
+          "callback"
+        ]
+      }
+    },
+    "/v1/live/zlmediakit/onStreamChange": {
+      "post": {
+        "summary": "流状态变更",
+        "operationId": "OnStreamChange",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/OnStreamChangeResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OnStreamChangeReq"
+            }
+          }
+        ],
+        "tags": [
+          "callback"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "EndLiveReq": {
+      "type": "object",
+      "properties": {
+        "live_id": {
+          "type": "integer",
+          "format": "uint32"
+        }
+      },
+      "title": "EndLiveReq",
+      "required": [
+        "live_id"
+      ]
+    },
+    "LiveComment": {
+      "type": "object",
+      "properties": {
+        "comment_id": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "live_id": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "content": {
+          "type": "string"
+        },
+        "create_at": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "LiveComment",
+      "required": [
+        "comment_id",
+        "user_id",
+        "live_id",
+        "content",
+        "create_at"
+      ]
+    },
+    "LiveCommentListReq": {
+      "type": "object",
+      "properties": {
+        "live_id": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "LiveCommentListReq",
+      "required": [
+        "live_id",
+        "page",
+        "page_size"
+      ]
+    },
+    "LiveCommentListResp": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LiveComment"
+          }
+        }
+      },
+      "title": "LiveCommentListResp",
+      "required": [
+        "total",
+        "list"
+      ]
+    },
+    "LiveCommentReq": {
+      "type": "object",
+      "properties": {
+        "live_id": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "content": {
+          "type": "string"
+        },
+        "send_time": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "LiveCommentReq",
+      "required": [
+        "live_id",
+        "content",
+        "send_time"
+      ]
+    },
+    "LiveCommentResp": {
+      "type": "object",
+      "properties": {
+        "comment_id": {
+          "type": "integer",
+          "format": "uint32"
+        }
+      },
+      "title": "LiveCommentResp",
+      "required": [
+        "comment_id"
+      ]
+    },
+    "LiveDeleteCommentReq": {
+      "type": "object",
+      "properties": {
+        "comment_id": {
+          "type": "integer",
+          "format": "uint32"
+        }
+      },
+      "title": "LiveDeleteCommentReq",
+      "required": [
+        "comment_id"
+      ]
+    },
+    "LiveDetailReq": {
+      "type": "object",
+      "properties": {
+        "live_id": {
+          "type": "integer",
+          "format": "uint32"
+        }
+      },
+      "title": "LiveDetailReq",
+      "required": [
+        "live_id"
+      ]
+    },
+    "LiveDetailResp": {
+      "type": "object",
+      "properties": {
+        "live_info": {
+          "$ref": "#/definitions/LiveInfo"
+        }
+      },
+      "title": "LiveDetailResp",
+      "required": [
+        "live_info"
+      ]
+    },
+    "LiveInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "title": {
+          "type": "string"
+        },
+        "cover": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "start_time": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "end_time": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "watch_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "like_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "comment_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "share_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "is_like": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "is_follow": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "is_star": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 这个字段没有实际含义"
+        },
+        "is_self": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否是自己的直播"
+        },
+        "author": {
+          "$ref": "#/definitions/User"
+        },
+        "type": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "description": {
+          "type": "string"
+        },
+        "player_url": {
+          "type": "string"
+        },
+        "cover_url": {
+          "type": "string"
+        },
+        "is_over": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "category": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "partition": {
+          "type": "string"
+        },
+        "room_id": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "token": {
+          "type": "string",
+          "description": " 推流token或者拉流token"
+        }
+      },
+      "title": "LiveInfo",
+      "required": [
+        "id",
+        "user_id",
+        "title",
+        "cover",
+        "status",
+        "start_time",
+        "end_time",
+        "watch_count",
+        "like_count",
+        "comment_count",
+        "share_count",
+        "is_like",
+        "is_follow",
+        "is_star",
+        "is_self",
+        "author",
+        "type",
+        "description",
+        "player_url",
+        "cover_url",
+        "is_over",
+        "category",
+        "tags",
+        "partition",
+        "room_id",
+        "token"
+      ]
+    },
+    "LiveLikeReq": {
+      "type": "object",
+      "properties": {
+        "live_id": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "action": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "LiveLikeReq",
+      "required": [
+        "live_id",
+        "action"
+      ]
+    },
+    "LiveLikeResp": {
+      "type": "object",
+      "properties": {
+        "like_count": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "LiveLikeResp",
+      "required": [
+        "like_count"
+      ]
+    },
+    "LiveListReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "item_id": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "category": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "LiveListReq",
+      "required": [
+        "page",
+        "page_size",
+        "type",
+        "item_id",
+        "category",
+        "total"
+      ]
+    },
+    "LiveListResp": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LiveInfo"
+          }
+        }
+      },
+      "title": "LiveListResp",
+      "required": [
+        "total",
+        "list"
+      ]
+    },
+    "OnPublicStreamReq": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "type": "string",
+          "description": " 流应用名"
+        },
+        "id": {
+          "type": "string",
+          "description": " TCP 链接唯一 ID"
+        },
+        "ip": {
+          "type": "string",
+          "description": " 推流器 IP"
+        },
+        "params": {
+          "type": "string",
+          "description": " 推流 URL 参数"
+        },
+        "port": {
+          "type": "integer",
+          "format": "uin16",
+          "description": " 推流器端口号"
+        },
+        "schema": {
+          "type": "string",
+          "description": " 推流协议, 可能是 rtsp、rtmp"
+        },
+        "stream": {
+          "type": "string",
+          "description": " 流 ID"
+        },
+        "vhost": {
+          "type": "string",
+          "description": " 流虚拟主机"
+        },
+        "mediaServerId": {
+          "type": "string",
+          "description": " 服务器 ID, 通过配置文件设置"
+        }
+      },
+      "title": "OnPublicStreamReq",
+      "required": [
+        "app",
+        "id",
+        "ip",
+        "params",
+        "port",
+        "schema",
+        "stream",
+        "vhost",
+        "mediaServerId"
+      ]
+    },
+    "OnPublicStreamResp": {
+      "type": "object",
+      "title": "OnPublicStreamResp"
+    },
+    "OnStreamChangeReq": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "type": "string",
+          "description": " 流应用名"
+        },
+        "regist": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 流注册或注销"
+        },
+        "schema": {
+          "type": "string",
+          "description": " rtsp 或 rtmp"
+        },
+        "stream": {
+          "type": "string",
+          "description": " 流 ID"
+        },
+        "vhost": {
+          "type": "string",
+          "description": " 流虚拟主机"
+        },
+        "mediaServerId": {
+          "type": "string",
+          "description": " 服务器 ID, 通过配置文件设置"
+        }
+      },
+      "title": "OnStreamChangeReq",
+      "required": [
+        "app",
+        "regist",
+        "schema",
+        "stream",
+        "vhost",
+        "mediaServerId"
+      ]
+    },
+    "OnStreamChangeResp": {
+      "type": "object",
+      "title": "OnStreamChangeResp"
+    },
+    "StartLiveReq": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "cover": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "category": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "partition": {
+          "type": "string"
+        }
+      },
+      "title": "StartLiveReq",
+      "required": [
+        "title",
+        "cover",
+        "description",
+        "category",
+        "tags",
+        "partition"
+      ]
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "username": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "role": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "follower_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "following_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "like_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "star_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "self_star_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "self_like_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "live_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "work_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "friend_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "uint32"
+        }
+      },
+      "title": "User",
+      "required": [
+        "id",
+        "username",
+        "nickname",
+        "avatar",
+        "gender",
+        "role",
+        "follower_count",
+        "following_count",
+        "like_count",
+        "star_count",
+        "self_star_count",
+        "self_like_count",
+        "live_count",
+        "work_count",
+        "friend_count",
+        "phone",
+        "email",
+        "status"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "description": "Enter JWT Bearer token **_only_**",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

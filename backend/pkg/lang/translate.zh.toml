@@ -1,0 +1,31 @@
+[EmailExistError]
+hash = "sha1-9582c9e117ff36d1f296a76d0e8dbab475448605"
+other = "The email is already in use"
+
+[PassWordError]
+hash = "sha1-a64daf893d1c3d1a06add30b308e8a2a7d42e7cf"
+other = "The password is incorrect"
+
+[PhoneExistError]
+hash = "sha1-abf5b4ccd2c6d9b70960192d866f93b146d1cc58"
+other = "The phone number is already in use"
+
+[UserDisableError]
+hash = "sha1-3788827ac32af5c765df6c6f3465ecbdafc197b5"
+other = "The user is disabled"
+
+[UserExistError]
+hash = "sha1-894486e98fb1300cc5fe5a9b090c0770d0eb6ba9"
+other = "The {{.UID}} is exist"
+
+[UserNotExistError]
+hash = "sha1-113cc36f6a8630f17dfaab114d1ddbbf443103fe"
+other = "The {{.UID}} is not exist"
+
+[UserPasswordError]
+hash = "sha1-a64daf893d1c3d1a06add30b308e8a2a7d42e7cf"
+other = "The password is incorrect"
+
+[UserUploadVideoError]
+hash = "sha1-c64d246657dea8da65d311212e00b4b884689748"
+other = "Error uploading the video"

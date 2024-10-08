@@ -1,0 +1,27 @@
+Name: live.rpc
+ListenOn: 0.0.0.0:28081
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: live.rpc
+Timeout: 30000
+
+Mysql:
+  Host: 0.0.0.0
+  Port: 13306
+  User: root
+  Password: asdasd
+  Database: cctiktok
+
+RedisConf:
+  Host: 0.0.0.0:36379
+  Type: node
+
+
+App:
+  Salt: "asdasd"
+  RecommendUrl: http://0.0.0.0:8088
+  LivePusherUrl: rtmp://localhost:1935
+  HttpPusherUrl: http://localhost:8080
+  FirstUsed: true
+  AppName: cctiktok

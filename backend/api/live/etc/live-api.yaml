@@ -1,0 +1,15 @@
+Name: live-api
+Host: 0.0.0.0
+Port: 38081
+RedisConf:
+  Host: 0.0.0.0:36379
+  Type: node
+
+Auth:
+  AccessSecret: asdasdasd
+  AccessExpire: 24 # hours
+LiveRpc:
+  Etcd:
+    Hosts:
+      - 0.0.0.0:2379
+    Key: live.rpc
