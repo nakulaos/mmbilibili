@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { ProLayout } from '@ant-design/pro-components';
 import { useSelector } from 'react-redux';
 import { IntlShape, useIntl } from 'react-intl';
-import route from '~/layout/HomeLayout/_defaultprops'
-import { RightBar } from '~/layout/HomeLayout/RightBar/RightBar'
+import route, { rightbarProps } from '~/layout/HomeLayout/_defaultprops'
+import { RightBar } from '@/layout/HomeLayout/RightBar/RightBar'
 
 const HomeLayout = () => {
     const [pathname, setPathname] = useState('/home')
     // @ts-ignore
     const userInfo = useSelector((state) => state.userInfo)
     const intl = useIntl()
+    const navigate = useNavigate()
 
     return (
         <div className="home-layout">
@@ -29,7 +30,7 @@ const HomeLayout = () => {
                   return  props.map((item) => {
                     return {
                       ...item,
-                      name: intl.formatMessage({ id: item.locale as string }),
+                      name: intl.formatMessage({ id: item.name as string }),
                     }
                   })
                 }}
@@ -40,6 +41,8 @@ const HomeLayout = () => {
                             onClick={() => {
                                 console.log(item)
                                 setPathname(item.path || '/home')
+                                navigate(item.path || '/home')
+                            
                             }}
                         >
                             {dom}
@@ -47,7 +50,13 @@ const HomeLayout = () => {
                     )
                 }}
                 actionsRender={
-                 RightBar
+                 ()=> {
+                     var items = rightbarProps.items
+                     items.map((item) => {
+                            item.title = intl.formatMessage({ id: item.title })
+                        })
+                     return <RightBar items={items} />
+                    }
                 }
             >
                 <Outlet />
