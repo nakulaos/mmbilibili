@@ -30,7 +30,7 @@ const HomeLayout = () => {
                   return  props.map((item) => {
                     return {
                       ...item,
-                      name: intl.formatMessage({ id: item.name as string }),
+                      name: intl.formatMessage({ id: item.name }),
                     }
                   })
                 }}
@@ -52,8 +52,12 @@ const HomeLayout = () => {
                 actionsRender={
                  ()=> {
                      var items = rightbarProps.items
-                     items.map((item) => {
-                            item.title = intl.formatMessage({ id: item.title })
+                     items = items.map((item) => {
+                         console.log(item)
+                         return{
+                            ...item,
+                            title : intl.formatMessage({ id: item.title })
+                         }
                         })
                      return <RightBar items={items} />
                     }

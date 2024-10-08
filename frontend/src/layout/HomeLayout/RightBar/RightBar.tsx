@@ -1,17 +1,10 @@
 import React from 'react';
-import { Flex, Input, Space } from 'antd'
+import { Flex, Space, Dropdown, Button, Menu } from 'antd';
 import Search from 'antd/es/input/Search';
 import { useIntl } from 'react-intl';
-import { 
-    BulbOutlined, 
-    ClockCircleOutlined, 
-    MessageOutlined, 
-    NodeIndexOutlined, 
-    RadarChartOutlined, 
-    StarOutlined 
-} from '@ant-design/icons';
-import { IconPopover } from '~/components/IconPopover/IconPopover';
-import { MenuInputSearchTextKey } from '~/locales/locale'
+import { DownOutlined } from '@ant-design/icons';
+import { IconPopover } from '@/components/IconPopover/IconPopover';
+import { MenuInputSearchTextKey } from '@/locales/locale';
 
 export interface RightBarItem {
     title: string;
@@ -24,39 +17,51 @@ export interface RightBarProps {
 }
 
 export const RightBar: React.FC<RightBarProps> = ({ items }) => {
-
     const intl = useIntl();
+
+    // 获取窗口宽度
+    const isSmallScreen = window.innerWidth < 1400;
+    const isExtraSmallScreen = window.innerWidth < 450;
+
+    const dropdownMenu = (
+        <Menu>
+            {items.map((item, index) => (
+                <Menu.Item key={index} icon={item.icon}>
+                    {item.title}
+                </Menu.Item>
+            ))}
+        </Menu>
+    );
+
     return (
         <>
-            <Space size={150}>
+            <Space size={isSmallScreen ? 15 : 150}>
                 <Flex gap="middle" justify="center" align="center">
                     <Search
                         placeholder={intl.formatMessage({ id: MenuInputSearchTextKey })}
                         size={'large'}
-                        style={{ width: 300 }}
+                        style={{ width: isSmallScreen ? 180 : 300 }}
                     />
                 </Flex>
-                <Flex gap="middle" justify="center" align="center">
 
-                    {items.map((item, index) => (
-                        <IconPopover
-                            key={index}
-                            title={item.title} // 使用国际化方法
-                            icon={item.icon}
-                            content={item.content}
-                        />
-                    ))}
-                    {/* 如果需要，直接渲染额外的图标 */}
-                    {/* <RadarChartOutlined />
-            <MessageOutlined />
-            <StarOutlined />
-            <NodeIndexOutlined />
-            <ClockCircleOutlined />
-            <BulbOutlined /> */}
-                </Flex>
+                {isExtraSmallScreen ? (
+                    <Dropdown overlay={dropdownMenu} trigger={['click']}>
+                        <Button icon={<DownOutlined />}>
+                        </Button>
+                    </Dropdown>
+                ) : (
+                    <Flex gap="middle" justify="center" align="center">
+                        {items.map((item, index) => (
+                            <IconPopover
+                                key={index}
+                                title={item.title} // 使用国际化方法
+                                icon={item.icon}
+                                content={item.content}
+                            />
+                        ))}
+                    </Flex>
+                )}
             </Space>
-
         </>
-
     );
 };
