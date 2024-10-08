@@ -7,6 +7,7 @@
         "url": "https://github.com/chrisuser"
     },
     "dependencies": {
+        "@ant-design/icons": "^5.5.1",
         "@ant-design/pro-components": "^2.7.19",
         "@ant-design/pro-layout": "^7.20.2",
         "@reduxjs/toolkit": "^2.2.2",
