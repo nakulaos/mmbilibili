@@ -14,20 +14,18 @@ const RootComponent: React.FC = () => {
     return (
         <BrowserRouter>
             <Routes>
-                {/* Redirect from '/' to '/home' */}
                 <Route path="/" element={<Navigate to="/home" replace />} />
-
                 <Route element={<HomeLayout />}>
                     <Route path="/home" element={<Home />} />
                 </Route>
 
-                <Route element={<BasicLayout />}>
-                    <Route path="/live" element={<Live />} />
-                    <Route path="/match" element={<Match />} />
-                    <Route path="/gamecenter" element={<GameCenter />} />
-                    <Route path="/video" element={<Video />} />
-                    <Route path="/vipsupermarket" element={<VipSuperMarket />} />
-                </Route>
+
+                <Route path="/live" element={<Live />} />
+                <Route path="/match" element={<Match />} />
+                <Route path="/gamecenter" element={<GameCenter />} />
+                <Route path="/video" element={<Video />} />
+                <Route path="/vipsupermarket" element={<VipSuperMarket />} />
+
             </Routes>
         </BrowserRouter>
     )

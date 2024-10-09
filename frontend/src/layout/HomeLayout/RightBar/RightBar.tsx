@@ -35,12 +35,12 @@ export const RightBar: React.FC<RightBarProps> = ({ items }) => {
 
     return (
         <>
-            <Space size={isSmallScreen ? 15 : 150}>
+            <Space size={isSmallScreen ? 15 : 130}>
                 <Flex gap="middle" justify="center" align="center">
                     <Search
                         placeholder={intl.formatMessage({ id: MenuInputSearchTextKey })}
                         size={'large'}
-                        style={{ width: isSmallScreen ? 180 : 300 }}
+                        style={{ width: isSmallScreen ? 180 : 350 }}
                     />
                 </Flex>
 

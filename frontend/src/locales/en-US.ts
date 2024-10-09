@@ -1,13 +1,22 @@
 import {
-    CreativeCenterKey,
-    HistoryKey,
-    MajorMemberKey,
+    ChatRoomKey,
+    CreativeCenterKey, EntertainmentKey, HelpMePlayKey,
+    HistoryKey, InteractiveGamePlayKey, KnowledgeKey, LifeKey,
+    MajorMemberKey, MatchKey,
     MenuGameCenterKey,
-    MenuHomeKey, MenuInputSearchTextKey,
+    MenuHomeKey,
+    MenuInputSearchTextKey,
     MenuLiveKey,
     MenuMatchKey,
     MenuVideoKey,
-    MenuVIPSupermarketKey, MessageKey, StarKey, TrendKey
+    MenuVIPSupermarketKey,
+    MessageKey,
+    MobileGameKey,
+    OnlineGameKey, RadioStationKey, ShoppingKey,
+    SinglePlayerGameKey,
+    StarKey,
+    TrendKey,
+    VirtualAnchorKey
 } from '@/locales/locale'
 
 export default {
@@ -24,4 +33,17 @@ export default {
     [StarKey]: "Star",
     [HistoryKey]: "History",
     [CreativeCenterKey]: "Creative Center",
+    [OnlineGameKey]: "Online Game",
+    [MobileGameKey]: "Mobile Game",
+    [SinglePlayerGameKey]: "Single Player Game",
+    [VirtualAnchorKey]: "Virtual Anchor",
+    [EntertainmentKey]: "Entertainment",
+    [RadioStationKey]: "Radio Station",
+    [MatchKey]: "Match",
+    [ChatRoomKey]: "Chat Room",
+    [LifeKey]: "Life",
+    [KnowledgeKey]: "Knowledge", // Corrected spelling
+    [HelpMePlayKey]: "Help Me Play",
+    [InteractiveGamePlayKey]: "Interactive Gameplay",
+    [ShoppingKey]: "Shopping"
 };

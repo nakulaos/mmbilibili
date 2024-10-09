@@ -1,13 +1,22 @@
 import {
-    CreativeCenterKey,
-    HistoryKey,
-    MajorMemberKey,
+    ChatRoomKey,
+    CreativeCenterKey, EntertainmentKey, HelpMePlayKey,
+    HistoryKey, InteractiveGamePlayKey, KnowledgeKey, LifeKey,
+    MajorMemberKey, MatchKey,
     MenuGameCenterKey,
-    MenuHomeKey, MenuInputSearchTextKey,
+    MenuHomeKey,
+    MenuInputSearchTextKey,
     MenuLiveKey,
     MenuMatchKey,
     MenuVideoKey,
-    MenuVIPSupermarketKey, MessageKey, StarKey, TrendKey
+    MenuVIPSupermarketKey,
+    MessageKey,
+    MobileGameKey,
+    OnlineGameKey, RadioStationKey, ShoppingKey,
+    SinglePlayerGameKey,
+    StarKey,
+    TrendKey,
+    VirtualAnchorKey
 } from '@/locales/locale'
 
 export default {
@@ -24,4 +33,18 @@ export default {
     [StarKey]: "收藏",
     [HistoryKey]: "历史",
     [CreativeCenterKey]: "创作中心",
+    [OnlineGameKey]: "网游",
+    [MobileGameKey]: "手机游戏",
+    [SinglePlayerGameKey]: "单机游戏",
+    [VirtualAnchorKey]: "虚拟主播",
+    [EntertainmentKey]: "娱乐",
+    [RadioStationKey]: "广播电台",
+    [MatchKey]: "比赛",
+    [ChatRoomKey]: "聊天室",
+    [LifeKey]: "生活",
+    [KnowledgeKey]: "知识",
+    [HelpMePlayKey]: "帮我玩",
+    [InteractiveGamePlayKey]: "互动游戏玩法",
+    [ShoppingKey]: "购物"
 };
+

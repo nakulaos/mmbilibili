@@ -14,7 +14,7 @@ const App: React.FC = () => {
     return (
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-                <ConfigProvider>
+                <ConfigProvider >
                     <I18nComponent>
                         <RootComponent />
                     </I18nComponent>
