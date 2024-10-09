@@ -12,11 +12,12 @@ import {
     MajorMemberKey, MenuGameCenterKey,
     MenuHomeKey,
     MenuLiveKey,
-    MenuMatchKey, MenuVideoKey,
+    MenuMatchKey, MenuVideoKey, MenuVIPSupermarketKey,
     MessageKey,
     StarKey,
     TrendKey
 } from '@/locales/locale'
+import VipSuperMarket from '~/pages/VipSuperMarket'
 
 const route = {
     path: '/',
@@ -48,7 +49,7 @@ const route = {
         },
         {
             path: '/vipsupermarket',
-            name: MenuGameCenterKey,
+            name: MenuVIPSupermarketKey,
         },
     ],
 };
