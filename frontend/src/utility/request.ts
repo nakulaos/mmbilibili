@@ -56,7 +56,7 @@ myAxios.interceptors.response.use(
         }
         Promise.reject(data?.data || {});
       }
-      return data.data;
+      return data;
     },
     function (error) {
       // 处理响应错误

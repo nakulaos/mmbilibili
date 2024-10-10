@@ -26,7 +26,7 @@ import {
     MenuVIPSupermarketKey,
     MessageKey,
     MobileGameKey,
-    NetworkErrorKey,
+    NetworkErrorKey, OkKey,
     OnlineGameKey, PasswordCharacterKindRuleKey, PasswordLengthRuleKey,
     PasswordPlaceholderKey,
     PasswordRuleRequiredKey,
@@ -103,4 +103,6 @@ export default {
     [LoginByPhoneKey]: "phone",
     [LoginByOtherKey]: "third-party login",
     [AutomaticLoginKey]: "automatic login",
+
+    [OkKey]: "ok"
 };

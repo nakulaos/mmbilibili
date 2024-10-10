@@ -26,7 +26,7 @@ import {
     MenuVIPSupermarketKey,
     MessageKey,
     MobileGameKey,
-    NetworkErrorKey,
+    NetworkErrorKey, OkKey,
     OnlineGameKey, PasswordCharacterKindRuleKey, PasswordLengthRuleKey,
     PasswordPlaceholderKey,
     PasswordRuleRequiredKey,
@@ -102,5 +102,6 @@ export default {
     [EmailLengthRuleKey]: "邮箱长度为5-30位",
     [UsernameCharacterKindRuleKey]: "用户名只能包含数字、字母",
     [PasswordCharacterKindRuleKey]: "密码必须包含数字、大写字母、小写字母、特殊字符中的三种",
+    [OkKey]: "ok"
 };
 

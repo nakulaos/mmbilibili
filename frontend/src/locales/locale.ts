@@ -30,6 +30,7 @@ export const ShoppingKey:string = "Shopping"
 export const AuthorizationErrorKey: string = "AuthorizationError";
 export const NetworkErrorKey: string = "NetworkError";
 export const ServerErrorKey: string = "ServerError";
+export const OkKey: string = "Ok";
 
 
 // 表单项
@@ -68,5 +69,7 @@ export const LoginByPhoneKey = "LoginByPhone";
 export const LoginByEmailKey = "LoginByEmail";
 export const LoginByOtherKey = "LoginByOther";
 export const AutomaticLoginKey = "AutomaticLogin";
+
+
 
 
