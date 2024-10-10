@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { clear } from 'console';
 
 interface UserInfo {
   id: number;
@@ -19,6 +20,7 @@ interface UserInfo {
   phone: string;
   email: string;
   status: number;
+  token?: string;
 }
 
 const initialState: UserInfo = {
@@ -40,6 +42,7 @@ const initialState: UserInfo = {
   phone: '',
   email: '',
   status: 0,
+  token: '',
 };
 
 const userInfoSlice = createSlice({
@@ -51,6 +54,12 @@ const userInfoSlice = createSlice({
     },
     clearUserInfo(state) {
       return initialState;
+    },
+    setToken(state, action: PayloadAction<string>) {
+      state.token = action.payload;
+    },
+    clearToken(state) {
+      state.token = '';
     },
   },
 });

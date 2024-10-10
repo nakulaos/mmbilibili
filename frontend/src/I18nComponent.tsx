@@ -21,8 +21,8 @@ const I18nComponent: React.FC<I18nComponentProps> = ({ children }) => {
         console.log('Current language:', language);
     }, [language]);
 
-    // @ts-ignore
     return (
+        // @ts-ignore
         <IntlProvider locale={language} messages={messages[language] }>
             {children}
         </IntlProvider>

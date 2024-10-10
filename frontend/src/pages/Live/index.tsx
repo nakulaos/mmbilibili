@@ -1,11 +1,12 @@
 import BasicLayout from '@/layout/BasicLayout/BasicLayout'
 import { LiveDataRoute, rightbarProps } from '@/pages/Live/data'
+import { LiveBox } from '~/components/LiveBox/LiveBox';
 
 const LiveContent = () => {
     return (
-        <div>
-            LiveContent
-        </div>
+        <>
+            <LiveBox />
+        </>
     )
 }
 
