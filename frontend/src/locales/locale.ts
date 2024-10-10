@@ -26,3 +26,47 @@ export const KnowledgeKey :string = "KnowLedge"
 export const HelpMePlayKey:string = "HelpMePlay"
 export const InteractiveGamePlayKey :string = "InteractiveGamePlay"
 export const ShoppingKey:string = "Shopping"
+
+export const AuthorizationErrorKey: string = "AuthorizationError";
+export const NetworkErrorKey: string = "NetworkError";
+export const ServerErrorKey: string = "ServerError";
+
+
+// 表单项
+export const UsernamePlaceholderKey: string = "UsernamePlaceholder";
+export const PasswordPlaceholderKey: string = "PasswordPlaceholder";
+export const ConfirmPasswordPlaceholderKey: string = "ConfirmPasswordPlaceholder";
+export const PhonePlaceholderKey: string = "PhonePlaceholder";
+export const EmailPlaceholderKey: string = "EmailPlaceholder";
+
+
+export const UsernameRuleRequiredKey: string = "UsernameRuleRequired";
+export const PasswordRuleRequiredKey: string = "PasswordRuleRequired";
+export const ConfirmPasswordRuleRequiredKey: string = "ConfirmPasswordRuleRequired";
+export const PhoneRuleRequiredKey: string = "PhoneRuleRequired";
+export const EmailRuleRequiredKey: string = "EmailRuleRequired";
+
+export const UsernameRuleValidateKey: string = "UsernameRuleValidate";
+export const PasswordRuleValidateKey: string = "PasswordRuleValidate";
+export const ConfirmPasswordRuleValidateKey: string = "ConfirmPasswordRuleValidate";
+export const PhoneRuleValidateKey: string = "PhoneRuleValidate";
+export const EmailRuleValidateKey: string = "EmailRuleValidate";
+
+export const UsernameLengthRuleKey: string = "UsernameLengthRule";
+export const PhoneLengthRuleKey: string = "PhoneLengthRule";
+export const PasswordLengthRuleKey: string = "PasswordLengthRule";
+export const EmailLengthRuleKey: string = "EmailLengthRule";
+
+export const UsernameCharacterKindRuleKey: string = "UsernameCharacterKindRule";
+export const PasswordCharacterKindRuleKey: string = "PasswordCharacterKindRule";
+export const PhoneCharacterKindRuleKey: string = "PhoneCharacterKindRule";
+export const EmailCharacterKindRuleKey: string = "EmailCharacterKindRule";
+
+// 登录类型
+export const LoginByUsernameKey = "LoginByUsername";
+export const LoginByPhoneKey = "LoginByPhone";
+export const LoginByEmailKey = "LoginByEmail";
+export const LoginByOtherKey = "LoginByOther";
+export const AutomaticLoginKey = "AutomaticLogin";
+
+
