@@ -50,8 +50,12 @@ const userInfoSlice = createSlice({
   initialState,
   reducers: {
     setUserInfo(state, action: PayloadAction<Partial<UserInfo>>) {
-      return { ...state, ...action.payload };
+      return {
+        ...state,
+        ...action.payload, // 合并当前状态和传入的 payload
+      };
     },
+
     clearUserInfo(state) {
       return initialState;
     },
