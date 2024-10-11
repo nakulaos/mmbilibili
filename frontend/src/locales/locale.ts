@@ -71,5 +71,24 @@ export const LoginByOtherKey = "LoginByOther";
 export const AutomaticLoginKey = "AutomaticLogin";
 
 
+// custom avatar content
+export const CustomAvatarContentAfterLoginYouCanKey = "CustomAvatarContentAfterLoginYouCan";
+export const CustomAvatarContentWatchHighDefinitionVideosForFreeKey = "CustomAvatarContentWatchHighDefinitionVideosForFree";
+export const CustomAvatarContentMultiTerminalSynchronousPlaybackRecordKey = "CustomAvatarContentMultiTerminalSynchronousPlaybackRecord";
+export const customAvatarContentPostBulletCommentsKey = "customAvatarContentPostBulletComments";
+export const customAvatarContentWatchingPopularTVDramasAndMoviesKey = "customAvatarContentWatchingPopularTVDramasAndMovies";
+export const customAvatarContentNoAccountKey = "customAvatarContentNoAccount";
 
+// operation
+export const loginKey = "login";
+export const logoutKey = "logout";
+export const registerKey = "register";
 
+// 名词
+export const followersKey = "followers";
+export const followingsKey = "followings";
+export const trendsKey = "trends";
+export const worksKey = "works";
+export const personalCenterKey = "personalCenter";
+export const submissionManagementKey = "submissionManagement";
+export const recommendationServiceKey = "recommendationService";

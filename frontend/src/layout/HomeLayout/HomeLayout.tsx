@@ -8,6 +8,7 @@ import { RightBar } from '@/layout/HomeLayout/RightBar/RightBar'
 import { Image } from 'antd'
 import { Logo } from '~/components/Logo/Logo'
 import BasicHeader from '~/layout/BasicLayout/BasicHeader/BasicHeader'
+import { CustomAvatar } from '@/components/CustomAvatar/CustomAvatar'
 
 const HomeLayout = () => {
     const [pathname, setPathname] = useState('/home')
@@ -16,6 +17,8 @@ const HomeLayout = () => {
     const intl = useIntl()
     const navigate = useNavigate()
     const layoutRef = useRef(null)
+
+    console.log(userInfo)
 
 
 
@@ -68,18 +71,12 @@ const HomeLayout = () => {
                 location={{ pathname }}
                 route={route}
                 avatarProps={{
-                    src: userInfo.avatar || 'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
-                    size: 'small',
-                    title: userInfo.nickname || '用户'
+                    render: (avatarProps, defaultDom, props) => {
+                        return (
+                            <CustomAvatar src={userInfo.avatar}></CustomAvatar>
+                        )
+                    }
                 }}
-
-                // bgLayoutImgList={
-                //     [
-                //         {
-                //             src: "http://qny.hallnakulaos.cn/mmbilibili.avif"
-                //         }
-                //     ]
-                // }
                 token={{
                     header: {
                         colorBgHeader: 'rgba(240, 242, 245, 0)', // 设置透明背景
@@ -133,7 +130,7 @@ const HomeLayout = () => {
                 //         </div>
                 //     )
                 // }}
-                
+                //
 
             >
                 <Outlet />

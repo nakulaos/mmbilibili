@@ -12,19 +12,21 @@ import { forwardRef, useImperativeHandle } from 'react'
 import { loginWithUsername } from '@/api/common'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUserInfo } from '@/store/userInfo'
+import { Await } from 'react-router-dom'
 
 interface LoginModelByUsernameProps {
     onFinish: (values: any) => void;  // 表单提交的处理函数
+    onReset: () => void;  // 表单重置的处理函数
 }
 
 export const LoginModelByUsername = forwardRef((props: LoginModelByUsernameProps, ref) => {
     const intl = useIntl()
     const dispatch = useDispatch();
 
-    const login = (values: any) => {
-        loginWithUsername(values).then((res)=>{
+    const login =  async (values: any) => {
+        await loginWithUsername(values).then((res) => {
             const updatedUserInfo = {
-                id : res.data.userinfo.id,
+                id: res.data.userinfo.id,
                 token: res.data.accessToken,
                 username: values.username,
                 avatar: res.data.userinfo.avatar,
@@ -46,7 +48,8 @@ export const LoginModelByUsername = forwardRef((props: LoginModelByUsernameProps
             };
 
             dispatch(setUserInfo(updatedUserInfo));
-            message.success(intl.formatMessage({id: OkKey}));
+            message.success(intl.formatMessage({ id: OkKey }));
+            props.onReset();
         })
     };
 
