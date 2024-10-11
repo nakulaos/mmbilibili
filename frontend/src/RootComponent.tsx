@@ -1,14 +1,13 @@
 import React from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import './styles/main.sass'
-import HomeLayout from '@/layout/HomeLayout/HomeLayout'
 import Home from '@/pages/Home'
-import BasicLayout from '@/layout/BasicLayout/BasicLayout'
 import Live from '@/pages/Live'
 import Match from '@/pages/Match'
 import Video from '@/pages/Video'
 import VipSuperMarket from '@/pages/VipSuperMarket'
 import GameCenter from '@/pages/GameCenter'
+import { HomeLayout } from '@/layout/HomeLayout/HomeLayout'
 
 const RootComponent: React.FC = () => {
     return (

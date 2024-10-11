@@ -19,40 +19,40 @@ import {
 } from '@/locales/locale'
 import VipSuperMarket from '~/pages/VipSuperMarket'
 
-const route = {
-    path: '/',
-    routes: [
-        {
-            path: '/home',
-            name: MenuHomeKey,
 
-        },
-        {
-            path: '/live',
-            name: MenuLiveKey,
+export const HomeMenuData = [
+    {
+        path: '/home',
+        key: MenuHomeKey,
 
-        },
-        {
-            path: '/match',
-            name: MenuMatchKey,
+    },
+    {
+        path: '/live',
+        key: MenuLiveKey,
 
-        },
-        {
-            path: '/gamecenter',
-            name: MenuGameCenterKey,
+    },
+    {
+        path: '/match',
+        key: MenuMatchKey,
 
-        },
-        {
-            path: '/video',
-            name: MenuVideoKey,
+    },
+    {
+        path: '/gamecenter',
+        key: MenuGameCenterKey,
 
-        },
-        {
-            path: '/vipsupermarket',
-            name: MenuVIPSupermarketKey,
-        },
-    ],
-};
+    },
+    {
+        path: '/video',
+        key: MenuVideoKey,
+
+    },
+    {
+        path: '/vipsupermarket',
+        key: MenuVIPSupermarketKey,
+    },
+]
+
+
 
 const content = (
     <div>
@@ -96,4 +96,3 @@ export const rightbarProps:RightBarProps = {
   ]  
 }
 
-export default route;

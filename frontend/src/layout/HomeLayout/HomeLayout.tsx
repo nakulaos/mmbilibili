@@ -1,143 +1,114 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { ProLayout, ProLayoutProps } from '@ant-design/pro-components'
-import { useSelector } from 'react-redux';
-import { IntlShape, useIntl } from 'react-intl';
-import route, { rightbarProps } from '~/layout/HomeLayout/_defaultprops'
+import { Button, Drawer, Flex, Layout, Menu } from 'antd'
+import { Outlet, useNavigate } from 'react-router-dom'
+import { Logo } from '@/components/Logo/Logo'
+import {
+ MenuInputSearchTextKey,
+} from '@/locales/locale'
+import { useIntl } from 'react-intl'
+import { HomeMenuData, rightbarProps } from '@/layout/HomeLayout/_defaultprops'
 import { RightBar } from '@/layout/HomeLayout/RightBar/RightBar'
-import { Image } from 'antd'
-import { Logo } from '~/components/Logo/Logo'
-import BasicHeader from '~/layout/BasicLayout/BasicHeader/BasicHeader'
+import { useSelector } from 'react-redux'
 import { CustomAvatar } from '@/components/CustomAvatar/CustomAvatar'
+import React, { useEffect, useState } from 'react'
+import Search from 'antd/es/input/Search'
+import "./index.css"
+import {  MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 
-const HomeLayout = () => {
-    const [pathname, setPathname] = useState('/home')
-    // @ts-ignore
-    const userInfo = useSelector((state) => state.userInfo)
-    const intl = useIntl()
-    const navigate = useNavigate()
-    const layoutRef = useRef(null)
+const { Header, Footer, Sider, Content } = Layout;
 
-    console.log(userInfo)
+export const HomeLayout= ()=> {
+    const intl = useIntl();
+    const userInfo = useSelector((state:any) => state.userInfo)
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [openDrawer, setOpenDrawer] = useState(false);
+    const navigate = useNavigate();
 
+    const homeMenuData = HomeMenuData.map((item) => {
+        return({
+            ...item,
+            label: intl.formatMessage({ id: item.key })
+        })
+    })
+    const rightBarItems = rightbarProps.items.map((item) => {
+        return {
+            ...item,
+            title: intl.formatMessage({ id: item.title })
+        }
+    })
 
+    const onCloseDrawer = () => {
+        setOpenDrawer(false);
+    };
 
+    const onOpenDrawer = () => {
+        setOpenDrawer(true);
+    }
+
+    const onClickMenu = (e:any) => {
+        const item = homeMenuData.filter((item) => item.key === e.key);
+        navigate(item[0]?.path || '/home');
+    }
+
+    // 使用 useEffect 监听窗口变化
     useEffect(() => {
-        // @ts-ignore
-        const header = layoutRef.current.querySelector('.ant-pro-layout-header');
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
 
-        //
-        // header.addEventListener("mouseenter", (e:any) => {
-        //     console.log("mouseenter")
-        // })
-        //
-        // header.addEventListener("mousemove", (e:any) => {
-        //     console.log("mousemove")
-        // });
-        // header.addEventListener("mouseleave", (e:any)=>{
-        //     console.log("mouseleave")
-        // });
+        window.addEventListener('resize', handleResize);
 
-        // if (header) {
-        //     header.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-        //     header.style.backgroundImage = 'url(http://qny.hallnakulaos.cn/mmbilibili.avif)'
-        //     header.style.backgroundSize = 'cover';
-        // }
-
-        // const layer = document.createElement("div");
-        // layer.classList.add("layer");
-        // const child = document.createElement( 'img');
-        // child.src = "http://qny.hallnakulaos.cn/mmbilibili.avif"
-        // child.style.position = 'absolute'; // 设置为绝对定位
-        // child.style.top = '0'; // 确保 child 在 layer 的顶部
-        // child.style.left = '0';
-        // child.style.zIndex = '-1'; // 设置为较小的 z-index 以确保其在底层
-        //
-        // layer.classList.add("layer");
-        // layer.style.position = 'relative'; // 设置为相对定位以便使用 z-index
-        // layer.appendChild(child)
-        // header.appendChild(layer)
-
-
-    }, [])
+        // 组件卸载时移除监听器
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, []);
 
     return (
-        <div className="home-layout"   ref={layoutRef}>
-            <ProLayout
-                id={"custom-prolayout"}
-                title="mmbilibili"
-                layout="top"
-                menu={{ locale: true, type: 'group' }}
-                location={{ pathname }}
-                route={route}
-                avatarProps={{
-                    render: (avatarProps, defaultDom, props) => {
-                        return (
-                            <CustomAvatar src={userInfo.avatar}></CustomAvatar>
-                        )
-                    }
-                }}
-                token={{
-                    header: {
-                        colorBgHeader: 'rgba(240, 242, 245, 0)', // 设置透明背景
-                    }
-
-                }}
-                menuDataRender={(props) => {
-                  return  props.map((item) => {
-                    return {
-                      ...item,
-                      name: intl.formatMessage({ id: item.name }),
-                    }
-                  })
-                }}
-
-                menuItemRender={(item, dom) => {
-                    return (
-                        <div
-                            onClick={() => {
-                                console.log(item)
-                                setPathname(item.path || '/home')
-                                navigate(item.path || '/home')
-
-                            }}
-                        >
-                            {dom}
+        <>
+            <Layout>
+                <Header className={"rootLayout-header"}>
+                    <Flex gap={'small'} align={'center'} justify={'space-between'}>
+                        <Flex gap={10} align={'center'} justify={'center'} className={'rootLayout-header-left-entry'}>
+                            <Logo title={"mmbilibili"} src={"/Logo.svg"} />
+                            {
+                                isMobile ? (
+                                    <>
+                                        {
+                                            openDrawer
+                                                ? (<Button icon={<MenuFoldOutlined />} onClick={onCloseDrawer}></Button>)
+                                                : (<Button icon={<MenuUnfoldOutlined />} onClick={onOpenDrawer}></Button>)
+                                        }
+                                        <Drawer open={openDrawer} onClose={onCloseDrawer} placement={'left'}>
+                                            <Menu items={homeMenuData}></Menu>
+                                        </Drawer>
+                                    </>
+                                ) : (
+                                    <Menu mode="horizontal" onClick={onClickMenu} items={homeMenuData} style={{ flex: "auto", minWidth: 0 }}></Menu>
+                                )
+                            }
+                        </Flex>
+                        <div className={"rootLayout-header-middle-entry"}>
+                            <Flex gap="middle" justify="center" align="center">
+                                <Search
+                                    placeholder={intl.formatMessage({ id: MenuInputSearchTextKey })}
+                                    size={'large'}
+                                />
+                            </Flex>
                         </div>
-                    )
-                }}
+                        <Flex gap={'small'} className={'rootLayout-header-right-entry'}>
+                            <RightBar items={rightBarItems} />
+                            <div className={"rootLayout-header-right-entry-avatar"}>
+                                <CustomAvatar src={userInfo.avatar}></CustomAvatar>
+                            </div>
+                        </Flex>
+                    </Flex>
+                </Header>
 
-                actionsRender={
-                 ()=> {
-                     var items = rightbarProps.items
-                     items = items.map((item) => {
-                         return{
-                            ...item,
-                            title : intl.formatMessage({ id: item.title })
-                         }
-                        })
-                     return <RightBar items={items} />
-                    }
-                }
-                // headerRender={(props:ProLayoutProps) => {
-                //     return (
-                //         <div                 style={{
-                //             backgroundImage: 'url(http://qny.hallnakulaos.cn/mmbilibili.avif',
-                //             backgroundSize: 'cover',
-                //             height:"155px",
-                //         }}>
-                //             <BasicHeader></BasicHeader>
-                //         </div>
-                //     )
-                // }}
-                //
-
-            >
-                <Outlet />
-            </ProLayout>
-        </div>
+                <Content>
+                    <Outlet></Outlet>
+                </Content>
+                <Footer></Footer>
+            </Layout>
+        </>
     )
 }
-
-
-export default HomeLayout;
