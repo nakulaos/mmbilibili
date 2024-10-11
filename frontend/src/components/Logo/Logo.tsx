@@ -13,14 +13,16 @@ interface LogoProps {
 const { Title } = Typography;
 
 export const Logo: React.FC<LogoProps> = ({ title, src }) => {
+    const isMobile = window.innerWidth < 768;
+
     return (
         <>
-            <Flex align={"center"} justify={"center"}>
+            <Flex align={"center"} justify={"center"} gap={20}>
                 <Icon component={LogoSvg} style={{
                     width:"30px",
                     height:"30px",
                 }}></Icon>
-                <Title level={5}>{title}</Title>
+                {isMobile ? null : <Title level={4}>{title}</Title>}
             </Flex>
         </>
     );

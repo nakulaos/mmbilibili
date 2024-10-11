@@ -174,7 +174,7 @@ This is the structure of the files in the project:
     │   ├── types               # data interfaces
     │   ├── utility             # utilities functions and custom components
     │   ├── App.tsx
-    │   ├── index.tsx
+    │   ├── HomeLayout.tsx
     │   ├── RootComponent.tsx   # React component with all the routes
     │   ├── serviceWorker.ts
     │   ├── setupTests.ts

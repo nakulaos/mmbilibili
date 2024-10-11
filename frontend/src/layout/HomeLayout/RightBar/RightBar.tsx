@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import { DownOutlined } from '@ant-design/icons';
 import { IconPopover } from '@/components/IconPopover/IconPopover';
 import { MenuInputSearchTextKey } from '@/locales/locale';
+import { CustomAvatar } from '@/components/CustomAvatar/CustomAvatar'
 
 export interface RightBarItem {
     title: string;
@@ -36,14 +37,6 @@ export const RightBar: React.FC<RightBarProps> = ({ items }) => {
     return (
         <>
             <Space size={isSmallScreen ? 15 : 130}>
-                <Flex gap="middle" justify="center" align="center">
-                    <Search
-                        placeholder={intl.formatMessage({ id: MenuInputSearchTextKey })}
-                        size={'large'}
-                        style={{ width: isSmallScreen ? 180 : 350 }}
-                    />
-                </Flex>
-
                 {isExtraSmallScreen ? (
                     <Dropdown overlay={dropdownMenu} trigger={['click']}>
                         <Button icon={<DownOutlined />}>
