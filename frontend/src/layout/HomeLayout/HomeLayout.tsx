@@ -2,26 +2,36 @@ import { Button, Drawer, Flex, Layout, Menu } from 'antd'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { Logo } from '@/components/Logo/Logo'
 import {
- MenuInputSearchTextKey,
+    MenuInputSearchTextKey, menuThemeKey
 } from '@/locales/locale'
 import { useIntl } from 'react-intl'
 import { HomeMenuData, rightbarProps } from '@/layout/HomeLayout/_defaultprops'
 import { RightBar } from '@/layout/HomeLayout/RightBar/RightBar'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { CustomAvatar } from '@/components/CustomAvatar/CustomAvatar'
 import React, { useEffect, useState } from 'react'
 import Search from 'antd/es/input/Search'
 import "./index.css"
-import {  MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
+import { MenuFoldOutlined, MenuUnfoldOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons'
+import { setTheme } from '@/store/global'
 
 const { Header, Footer, Sider, Content } = Layout;
 
 export const HomeLayout= ()=> {
     const intl = useIntl();
     const userInfo = useSelector((state:any) => state.userInfo)
+    const global = useSelector((state:any) => state.global)
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [openDrawer, setOpenDrawer] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const handleThemeChange = () => {
+        if(global.theme === 'dark') {
+            dispatch(setTheme('light'));
+        }else{
+            dispatch(setTheme('dark'));
+    }}
 
     const homeMenuData = HomeMenuData.map((item) => {
         return({
@@ -30,6 +40,25 @@ export const HomeLayout= ()=> {
         })
     })
     const rightBarItems = rightbarProps.items.map((item) => {
+        if(item.title === menuThemeKey){
+            if(global.theme === 'dark') {
+                return {
+                    ...item,
+                    title: intl.formatMessage({ id: item.title }),
+                    icon: <SunOutlined />,
+                    onClick: handleThemeChange,
+                }
+            }else{
+                return {
+                    ...item,
+                    title: intl.formatMessage({ id: item.title }),
+                    icon: <MoonOutlined />,
+                    onClick: handleThemeChange,
+                }
+
+            }
+        }
+
         return {
             ...item,
             title: intl.formatMessage({ id: item.title })
@@ -96,10 +125,11 @@ export const HomeLayout= ()=> {
                             </Flex>
                         </div>
                         <Flex gap={'small'} className={'rootLayout-header-right-entry'}>
-                            <RightBar items={rightBarItems} />
+
                             <div className={"rootLayout-header-right-entry-avatar"}>
                                 <CustomAvatar src={userInfo.avatar}></CustomAvatar>
                             </div>
+                            <RightBar items={rightBarItems} />
                         </Flex>
                     </Flex>
                 </Header>

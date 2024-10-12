@@ -17,9 +17,6 @@ const I18nComponent: React.FC<I18nComponentProps> = ({ children }) => {
     // @ts-ignore
     const language = useSelector((state) => state.global.language);
 
-    useEffect(() => {
-        console.log('Current language:', language);
-    }, [language]);
 
     return (
         // @ts-ignore

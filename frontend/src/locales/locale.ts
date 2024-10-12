@@ -12,6 +12,9 @@ export const MenuGameCenterKey: string = "gamecenter";
 export const MenuVideoKey: string = "video";
 export const MenuVIPSupermarketKey: string = "vipsupermarket";
 export const MenuInputSearchTextKey: string = "InputSearchText";
+export const MenuSettingKey: string = "Setting";
+export const MenuTranslationKey: string = "Translation";
+export const menuThemeKey: string = "Theme";
 
 export const OnlineGameKey :string = "OnlineGame"
 export const MobileGameKey : string = "MobileGame"
@@ -92,3 +95,7 @@ export const worksKey = "works";
 export const personalCenterKey = "personalCenter";
 export const submissionManagementKey = "submissionManagement";
 export const recommendationServiceKey = "recommendationService";
+
+// 语言
+export const Chinese = "zh-CN";
+export const English = "en-US";

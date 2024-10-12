@@ -11,6 +11,7 @@ export interface RightBarItem {
     title: string;
     icon: React.ReactNode;
     content: React.ReactNode;
+    onClick?: () => void;
 }
 
 export interface RightBarProps {
@@ -27,7 +28,7 @@ export const RightBar: React.FC<RightBarProps> = ({ items }) => {
     const dropdownMenu = (
         <Menu>
             {items.map((item, index) => (
-                <Menu.Item key={index} icon={item.icon}>
+                <Menu.Item key={index} icon={item.icon} onClick={item.onClick}>
                     {item.title}
                 </Menu.Item>
             ))}
@@ -50,6 +51,7 @@ export const RightBar: React.FC<RightBarProps> = ({ items }) => {
                                 title={item.title} // 使用国际化方法
                                 icon={item.icon}
                                 content={item.content}
+                                onClick={item.onClick}
                             />
                         ))}
                     </Flex>

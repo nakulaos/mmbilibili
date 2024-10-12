@@ -1,7 +1,7 @@
 import {
     AuthorizationErrorKey,
     AutomaticLoginKey,
-    ChatRoomKey,
+    ChatRoomKey, Chinese,
     ConfirmPasswordPlaceholderKey,
     ConfirmPasswordRuleRequiredKey,
     ConfirmPasswordRuleValidateKey,
@@ -13,7 +13,7 @@ import {
     EmailLengthRuleKey,
     EmailPlaceholderKey,
     EmailRuleRequiredKey,
-    EmailRuleValidateKey,
+    EmailRuleValidateKey, English,
     EntertainmentKey, followersKey, followingsKey,
     HelpMePlayKey,
     HistoryKey,
@@ -30,7 +30,7 @@ import {
     MenuHomeKey,
     MenuInputSearchTextKey,
     MenuLiveKey,
-    MenuMatchKey,
+    MenuMatchKey, MenuSettingKey, menuThemeKey, MenuTranslationKey,
     MenuVideoKey,
     MenuVIPSupermarketKey,
     MessageKey,
@@ -75,6 +75,10 @@ export default {
     [StarKey]: "收藏",
     [HistoryKey]: "历史",
     [CreativeCenterKey]: "创作中心",
+    [MenuSettingKey]: "设置",
+    [MenuTranslationKey]: "语言",
+    [menuThemeKey]: "主题",
+
     [OnlineGameKey]: "网游",
     [MobileGameKey]: "手机游戏",
     [SinglePlayerGameKey]: "单机游戏",
@@ -140,5 +144,9 @@ export default {
     [personalCenterKey]: "个人中心",
     [submissionManagementKey]: "投稿管理",
     [recommendationServiceKey]: "推荐服务",
+
+    // 语言
+    [Chinese]: '中文',
+    [English]: 'English',
 };
 
