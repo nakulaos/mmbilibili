@@ -4,14 +4,15 @@ interface IconPopoverProps {
     title: string;
     icon?: React.ReactNode;
     content: React.ReactNode;
+    onClick?: () => void;
 }
 
-export const IconPopover: React.FC<IconPopoverProps> = ({ title, icon, content }) => {
+export const IconPopover: React.FC<IconPopoverProps> = ({ title, icon, content,onClick }) => {
     return (
-        <Popover content={content}>
+        <Popover content={content} >
             <Flex gap="0" vertical justify="center" align="center">
                 {icon && (
-                    <Button icon={icon} style={{ border: 'none' }} />
+                    <Button icon={icon} style={{ border: 'none' }} onClick={onClick} />
                 )}
                 <Typography>
                     {title}
