@@ -31,11 +31,14 @@
 // export default BasicLayout;
 
 import React, {  useState } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import { ProLayout } from '@ant-design/pro-components'
-import { useSelector } from 'react-redux';
+
 import { useIntl } from 'react-intl';
-import { RightBar, RightBarProps } from '@/layout/HomeLayout/RightBar/RightBar'
+import { RightBar, RightBarProps } from '@/components/RightBar/RightBar'
+import { CustomAvatar } from '@/components/CustomAvatar/CustomAvatar'
+import { useSelector } from 'react-redux'
+
 
 interface BasicLayoutProps {
     route:any
@@ -46,8 +49,7 @@ interface BasicLayoutProps {
 // @ts-ignore
 export const BasicLayout = ({route,rightBar,children}) => {
     const [pathname, setPathname] = useState('/home')
-    // @ts-ignore
-    const userInfo = useSelector((state) => state.userInfo)
+    const userInfo = useSelector((state:any) => state.userInfo)
     const intl = useIntl()
     const navigate = useNavigate()
 
@@ -60,9 +62,13 @@ export const BasicLayout = ({route,rightBar,children}) => {
                 menu={{ locale: true, type: 'group' }}
                 location={{ pathname }}
                 avatarProps={{
-                    src: userInfo.avatar || 'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
-                    size: 'small',
-                    title: userInfo.nickname || 'user'
+                    render: ()=> {
+                        return (
+                            <>
+                                <CustomAvatar src={userInfo.avatar}></CustomAvatar>
+                            </>
+                        )
+                    }
                 }}
                 menuItemRender={(item, dom) => {
                     return (
@@ -70,6 +76,9 @@ export const BasicLayout = ({route,rightBar,children}) => {
                             onClick={() => {
                                 console.log(item)
                                 setPathname(item.path || '/home')
+                                if(item.path?.startsWith('/')){
+                                    navigate(item.path)
+                                }
                             }}
                         >
                             {dom}
@@ -78,15 +87,7 @@ export const BasicLayout = ({route,rightBar,children}) => {
                 }}
                 actionsRender={
                     ()=> {
-                        var items = rightBar.items
-                        // @ts-ignore
-                        items = items.map((item) => {
-                            return{
-                                ...item,
-                                title : intl.formatMessage({ id: item.title })
-                            }
-                        })
-                        return <RightBar items={items} />
+                       return <RightBar items={rightBar.items} />
                     }
                 }
                 menuDataRender={(props) => {

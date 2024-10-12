@@ -3,7 +3,7 @@ import { Provider, useSelector } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 import RootComponent from './RootComponent'
 import { persistor, store } from '@/store/store'
-import { ConfigProvider, theme } from 'antd'
+import { ConfigProvider } from 'antd'
 import I18nComponent from '~/I18nComponent'
 import { ThemeProvider } from 'antd-style';
 
