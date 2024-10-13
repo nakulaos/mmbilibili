@@ -38,6 +38,9 @@ import { useIntl } from 'react-intl';
 import { RightBar, RightBarProps } from '@/components/RightBar/RightBar'
 import { CustomAvatar } from '@/components/CustomAvatar/CustomAvatar'
 import { useSelector } from 'react-redux'
+import { Flex } from 'antd'
+import Search from 'antd/es/input/Search'
+import { MenuInputSearchTextKey } from '@/locales/locale'
 
 
 interface BasicLayoutProps {
@@ -87,7 +90,17 @@ export const BasicLayout = ({route,rightBar,children}) => {
                 }}
                 actionsRender={
                     ()=> {
-                       return <RightBar items={rightBar.items} />
+                       return (
+                           <>
+                               <Flex gap="middle" justify="center" align="center">
+                                   <Search
+                                       placeholder={intl.formatMessage({ id: MenuInputSearchTextKey })}
+                                       size={'large'}
+                                   />
+                               </Flex>
+                               <RightBar items={rightBar.items} />
+                           </>
+                        )
                     }
                 }
                 menuDataRender={(props) => {

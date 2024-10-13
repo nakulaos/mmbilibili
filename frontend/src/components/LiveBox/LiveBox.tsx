@@ -1,18 +1,18 @@
-import { LiveBoxContainer } from "./LiveBoxContainer"
-import { LiveBoxFooter } from "./LiveBoxFooter"
-import { LiveBoxHeader } from "./LiveBoxHeader"
+import React from 'react';
+import { LiveBoxHeader } from './LiveBoxHeader';
+import { LiveBoxFooter } from './LiveBoxFooter';
+import { LiveBoxContainer } from '@/components/LiveBox/LiveBoxContainer'
+
+export type Live = API.LiveInfo;
+
+export const LiveBox: React.FC<Live> = (live) => {
 
 
-
-
-
-
-export const LiveBox = () => {
     return (
         <>
             <LiveBoxHeader />
-            <LiveBoxContainer></LiveBoxContainer>
+                <LiveBoxContainer live={live} />
             <LiveBoxFooter />
         </>
-    )
-}
+    );
+};

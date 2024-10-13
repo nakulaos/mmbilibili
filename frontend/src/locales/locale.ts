@@ -99,3 +99,10 @@ export const recommendationServiceKey = "recommendationService";
 // 语言
 export const Chinese = "zh-CN";
 export const English = "en-US";
+
+// 推荐类型
+export const NewKey = "new";
+export const HotKey = "hot";
+export const RecommendKey = "recommend";
+export const neighborKey = "neighbor";
+
