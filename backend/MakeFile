@@ -18,3 +18,9 @@ gen-api:
 gen-swagger:
 	cd  ./script/desc/api && goctl api plugin -plugin goctl-swagger="swagger -filename user.json" -api user.api -dir ../../swagger
 	cd  ./script/desc/api && goctl api plugin -plugin goctl-swagger="swagger -filename live.json" -api live.api -dir ../../swagger
+
+
+
+ffmpeg:
+	ffmpeg -f dshow  -i video="USB2.0 HD UVC WebCam":audio="Microphone (C-Media(R) Audio)" -vcodec h264 -acodec aac -f flv rtmp://localhost:1935/live/7/1726042205
+	ffmpeg -re -i C:/Users/DENGFENGCHENG/Videos/Captures/mp4/time.mp4 -vcodec h264 -acodec aac -f flv rtmp://localhost:1935/live/6/1726042205

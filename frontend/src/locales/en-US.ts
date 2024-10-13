@@ -16,7 +16,7 @@ import {
     EmailRuleValidateKey, English,
     EntertainmentKey, followersKey, followingsKey,
     HelpMePlayKey,
-    HistoryKey,
+    HistoryKey, HotKey,
     InteractiveGamePlayKey,
     KnowledgeKey,
     LifeKey,
@@ -34,8 +34,8 @@ import {
     MenuVideoKey,
     MenuVIPSupermarketKey,
     MessageKey,
-    MobileGameKey,
-    NetworkErrorKey,
+    MobileGameKey, neighborKey,
+    NetworkErrorKey, NewKey,
     OkKey,
     OnlineGameKey,
     PasswordCharacterKindRuleKey,
@@ -47,7 +47,7 @@ import {
     PhonePlaceholderKey,
     PhoneRuleRequiredKey,
     PhoneRuleValidateKey,
-    RadioStationKey, recommendationServiceKey, registerKey,
+    RadioStationKey, recommendationServiceKey, RecommendKey, registerKey,
     ServerErrorKey,
     ShoppingKey,
     SinglePlayerGameKey,
@@ -150,4 +150,10 @@ export default {
     // 语言
     [Chinese]: '中文',
     [English]: 'English',
+
+    // 推荐类型
+    [NewKey]: 'new',
+    [HotKey]: 'hot',
+    [RecommendKey]: 'recommend',
+    [neighborKey]: 'familiar',
 };
