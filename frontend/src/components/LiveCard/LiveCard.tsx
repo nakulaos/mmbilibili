@@ -4,7 +4,7 @@ import { Live } from '@/components/LiveBox/LiveBox'
 import { ThunderboltOutlined } from '@ant-design/icons'
 import { useEffect, useRef, useState } from 'react'
 import Player from 'xgplayer'
-import FlvPlugin from 'xgplayer-flv'
+import FlvPlugin from 'xgplayer-flv.js'
 import Mp4Player from 'xgplayer-mp4'
 
 interface LiveCardProps {
@@ -17,18 +17,23 @@ export const LiveCard: React.FC<LiveCardProps> = ({ live }) => {
     const [showPlayer, setShowPlayer] = useState(false);
     const player = useRef<Player | null>(null)
     let timeoutId: NodeJS.Timeout | null = null;
+    const [isFirstHover, setIsFirstHover] = useState(true);
 
     const handleMouseEnter = () => {
         setIsHovered(true);
+        const delay = isFirstHover ? 2000 : 800;
+
         timeoutId = setTimeout(() => {
             setShowPlayer(true);
-        }, 2000);
+            setIsFirstHover(false);
+        }, delay);
     };
 
     const handleMouseLeave = () => {
         setIsHovered(false);
         if (timeoutId) {
             clearTimeout(timeoutId);
+            timeoutId = null;
         }
         setShowPlayer(false);
     };
@@ -48,10 +53,23 @@ export const LiveCard: React.FC<LiveCardProps> = ({ live }) => {
                     url: live.player_url,
                     fluid: true,
                     plugins: [FlvPlugin],
-                    videoInit: true,
+                    autoplay: true,
+                    disableProgress: true,
+                    volume: 0,
+                    closeInactive: true,
+                    closeVideoClick: true,
+                    closeVideoDblclick: true,
+                    controls: false,
                 })
+            }else{
+                player.current?.play()
+            }
+        }else{
+            if(player.current){
+                player.current?.pause()
+            }
 
-        }}
+        }
 
         return () => {
             player.current?.destroy()
@@ -62,21 +80,23 @@ export const LiveCard: React.FC<LiveCardProps> = ({ live }) => {
 
     return (
         <div className="live-card-container">
-            <div className="live-card">
+            <div className="live-card"
+                 onMouseEnter={handleMouseEnter}
+                 onMouseLeave={handleMouseLeave}>
                 <div className="card-banner">
                     <div className="banner-header"></div>
-                    <div className="banner-content">
+                    <div className="banner-content" >
                         <div
-                            className="image-container"
-                            onMouseEnter={handleMouseEnter} // 添加鼠标悬停事件
-                            onMouseLeave={handleMouseLeave} // 添加鼠标离开事件
+                            className={'image-container'}
                         >
                             {!showPlayer ? (
-                                <div className="image" draggable={false}>
+                                <div className={showPlayer?'image-content hidden':'image-content visible'} draggable={false}>
                                     <Image
                                         src={live.cover_url}
                                         preview={false}
                                         onDragStart={(e) => e.preventDefault()}
+                                        height={168.75}
+                                        width={300}
                                     />
                                     <div className="top-right-corner-overlay-element" draggable={false}>
                                         <ThunderboltOutlined />
@@ -86,7 +106,7 @@ export const LiveCard: React.FC<LiveCardProps> = ({ live }) => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="video-container">
+                                <div className={showPlayer ? 'video-container visible' : 'video-container hidden'}>
                                     <div id="xgplayer"/>
                                 </div>
                             )}
@@ -95,9 +115,14 @@ export const LiveCard: React.FC<LiveCardProps> = ({ live }) => {
                     <div className="banner-footer"></div>
                 </div>
 
-                {/* 卡片底部，显示头像和用户名 */}
                 <div className="card-footer">
-                    <Avatar src={author.avatar} />
+                    <div className={"avatar-container"}>
+                        <Avatar src={author.avatar} />
+                    </div>
+                    <div className={"action-container"}>
+
+                    </div>
+
                     <span>{author.nickname}</span>
                 </div>
             </div>
