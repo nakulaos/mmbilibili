@@ -5,6 +5,12 @@ import { liveInfos } from '@/components/LiveList/data';
 import { LiveCard } from '@/components/LiveCard/LiveCard';
 import './LiveList.scss';
 
+interface LiveListProps{
+    Partition: string,
+
+}
+
+
 export const LiveList = () => {
     const [tabKey, setTabKey] = useState('');
     const intl = useIntl();
@@ -35,7 +41,9 @@ export const LiveList = () => {
     const data = liveInfos;
 
     useEffect(() => {
-        console.log('LiveList');
+
+
+
     }, []);
 
     return (

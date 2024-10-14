@@ -4,18 +4,20 @@
 
   .tabs {
     display: flex;
-    justify-content: space-around;
+    justify-content: start;
     margin-bottom: 16px;
 
     .tab {
       padding: 10px 20px;
       cursor: pointer;
+      border-radius: 10px;
       transition: background-color 0.3s;
+      font-size: 10px;
 
       &.active {
         font-weight: bold;
         color: #1890ff;
-        background-color: rgba(24, 144, 255, 0.1); // 使用背景色指示选中状态
+        background-color: rgba(24, 144, 255, 0.1);
       }
 
       &:hover {
