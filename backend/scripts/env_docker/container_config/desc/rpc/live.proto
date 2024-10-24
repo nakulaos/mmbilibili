@@ -1,0 +1,189 @@
+syntax = "proto3";
+
+package live;
+
+option go_package = "./live";
+
+message User {
+  uint32 id = 1; // 用户ID
+  string username = 2; // 账号名
+  string nickname = 3; // 昵称
+  string avatar = 4; // 头像
+  uint32 gender = 5; // 性别
+  uint32 role = 6; // 角色
+  int32 follower_count = 7; // 粉丝数
+  int32 following_count = 8; // 关注数
+  int32 like_count = 9; // 被点赞数
+  int32 star_count = 10; // 被收藏数
+  int32 self_star_count = 11; // 自己收藏作品数
+  int32 self_like_count = 12; // 自己点赞作品数
+  int32 live_count = 13; // 直播次数
+  int32 work_count = 14; // 作品数
+  int32 friend_count = 15; // 朋友数
+  string phone = 16; // 手机号
+  string email = 17; // 邮箱
+  uint32 status = 18; // 状态
+}
+
+message LiveInfo {
+  uint32 live_id = 1;
+  uint32 user_id = 2;
+  string title = 3;
+  string cover = 4;
+  uint32 status = 5;
+  int64 start_time = 6;
+  int64 end_time = 7;
+  int32 watch_count = 8;
+  int32 like_count = 9;
+  int32 comment_count = 10;
+  int32 share_count = 11;
+  bool is_like = 12;
+  bool is_follow = 13;
+  bool is_star = 14; // 这个字段没有实际含义
+  bool is_self = 15; // 是否是自己的直播
+  User author = 16;
+  int32 type = 17;
+  string description = 18;
+  string player_url = 19;
+  string cover_url = 20;
+  bool is_over = 21;
+  repeated string category = 22;
+  repeated string tags = 23;
+  string partition = 24;
+  uint32 room_id = 25;
+  string token = 26; // 推流token或者拉流token
+}
+
+message LiveListResp {
+  uint32 user_id = 1;
+  int32 total = 2;
+  repeated LiveInfo list = 3;
+}
+
+message StartLiveReq {
+  string title = 1;
+  string cover = 2;
+  string description = 3;
+  repeated string category = 4;
+  repeated string tags = 5;
+  string partition = 6;
+  int32 uid = 7;
+}
+
+message EndLiveReq {
+  uint32 live_id = 1;
+  uint32 user_id = 2;
+}
+
+message LiveListReq {
+  optional int32 page = 1;
+  optional int32 page_size = 2;
+  optional string recommend_type = 3;
+  optional uint32 item_id = 4;
+  optional string category = 5;
+  optional int32 total = 6;
+  uint32 user_id = 7;
+  optional string partition = 8;
+}
+
+message LiveDetailReq {
+  uint32 live_id = 1;
+}
+
+message LiveDetailResp {
+  LiveInfo live_info = 1;
+}
+
+message LiveCommentReq {
+  uint32 user_id = 1;
+  uint32 live_id = 2;
+  string content = 3;
+  uint64 send_time = 4;
+}
+
+message LiveDeleteCommentReq {
+  uint32 comment_id = 1;
+  uint32 user_id = 2;
+}
+
+message LiveCommentResp {
+  uint32 comment_id = 1;
+}
+
+message LiveCommentListReq {
+  uint32 user_id = 1;
+  uint32 live_id = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message LiveCommentListResp {
+  int32 total = 1;
+  repeated LiveComment list = 2;
+}
+
+message LiveComment {
+  uint32 comment_id = 1;
+  uint32 user_id = 2;
+  uint32 live_id = 3;
+  string content = 4;
+  int64 create_at = 5;
+}
+
+message LiveLikeReq {
+  uint32 user_id = 1;
+  uint32 live_id = 2;
+  int32 action = 3;
+}
+
+message LiveLikeResp {
+  int32 like_count = 1;
+}
+
+message OnPublicStreamReq {
+  string app = 1;          // 流应用名
+  string id = 2;           // TCP 链接唯一 ID
+  string ip = 3;           // 推流器 IP
+  string params = 4;       // 推流 URL 参数
+  uint32 port = 5;         // 推流器端口号
+  string schema = 6;       // 推流协议, 可能是 rtsp、rtmp
+  string stream = 7;       // 流 ID
+  string vhost = 8;        // 流虚拟主机
+  string media_server_id = 9; // 服务器 ID, 通过配置文件设置
+}
+
+message OnPublicStreamResp {
+  int32 code = 1;                // 错误代码，0 代表允许推流
+  string msg = 2;       // 不允许推流时的错误提示
+}
+
+message OnStreamChangeReq {
+  string app = 1;             // 流应用名
+  bool regist = 2;          // 流注册或注销
+  string schema = 3;          // rtsp 或 rtmp
+  string stream = 4;          // 流 ID
+  string vhost = 5;           // 流虚拟主机
+  string media_server_id = 6;   // 服务器 ID, 通过配置文件设置
+}
+
+message OnStreamChangeResp {
+  int32 code = 1;                // 错误代码，0 代表允许推流
+  string msg = 2;       // 不允许推流时的错误提示
+}
+
+service LiveBusinessRpcService {
+  rpc StartLive(StartLiveReq) returns (LiveDetailResp) {}
+  rpc EndLive(EndLiveReq) returns (LiveDetailResp) {}
+  rpc LiveComment(LiveCommentReq) returns (LiveCommentResp) {}
+  rpc LiveLike(LiveLikeReq) returns (LiveLikeResp) {}
+  rpc LiveDeleteComment(LiveDeleteCommentReq) returns (LiveCommentResp) {}
+  rpc LiveListByGorse(LiveListReq) returns (LiveListResp) {}
+  rpc LiveList(LiveListReq) returns (LiveListResp) {}
+  rpc LiveCommentList(LiveCommentListReq) returns (LiveCommentListResp) {}
+  rpc LiveInfo(LiveDetailReq) returns (LiveDetailResp) {}
+}
+
+service LiveCallbackRpcService{
+  rpc OnPublicStream(OnPublicStreamReq) returns (OnPublicStreamResp) {}
+  rpc OnStreamChange(OnStreamChangeReq) returns (OnStreamChangeResp) {}
+}
