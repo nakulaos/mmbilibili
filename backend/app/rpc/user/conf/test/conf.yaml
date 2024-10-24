@@ -1,0 +1,49 @@
+kitex:
+  service: "userrpc"
+  address: ":28888"
+  log:
+    log_level: debug
+    log_file_name: "log/kitex.log"
+    log_max_size: 10
+    log_max_age: 3
+    log_max_backups: 50
+
+registry:
+  registry_address: 127.0.0.1:8500
+  username: ""
+  password: ""
+
+open_telemetry:
+  open_telemetry_collector_addr: localhost:4317
+
+
+user_cache:
+  name: user
+  # 时间单位是min
+  local_lfu_size: 256 #Mb
+  local_lfu_ttl: 10 # min
+  refresh_duration: 1
+  stop_refresh_after_last_access: 30
+  not_found_expiry: 1
+  remote_expiry: 30
+  sync_local_cache_name: UserDalLocalCache
+
+redis:
+  addrs:
+    - 0.0.0.0:36379
+  client_name: "userrpc"
+  dial_timeout: 1
+  read_timeout: 1
+  write_timeout: 1
+  max_active_coons: 15
+  min_idle_coons: 10
+
+app:
+  salt: "asdasd"
+  access_token_expire: 30
+  refresh_token_expire: 360 #min
+  access_token_secret: asdasd
+  refresh_token_secret: asdasdasdasd
+
+mysql:
+  dsn: "root:asdasd@tcp(127.0.0.1:13306)/mmbilibili?charset=utf8mb4&parseTime=True&loc=Local"

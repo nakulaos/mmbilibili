@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "/user";
+
+message Info {
+  string title = 1;
+  string desc = 2;
+  string author = 3;
+  string email = 4;
+  string version = 5;
+}
+
+// 用户登录请求
+message LoginWithUsernameReq {
+  string username = 1; // 账号名
+  string password = 2; // 密码
+}
+
+message LoginWithEmailReq {
+  string email = 1;    // 邮箱
+  string password = 2; // 密码
+}
+
+message LoginWithPhoneReq {
+  string phone = 1;    // 手机号
+  string password = 2; // 密码
+}
+
+// 用户注册请求
+message RegisterReq {
+  string username = 1; // 账号名
+  string password = 2; // 密码
+}
+
+// 用户信息
+message User {
+  int64 id = 1; // 用户ID
+  string username = 2; // 账号名
+  string nickname = 3; // 昵称
+  string avatar = 4; // 头像
+  uint32 gender = 5; // 性别
+  uint32 role = 6; // 角色
+  int64 follower_count = 7; // 粉丝数
+  int64 following_count = 8; // 关注数
+  int64 like_count = 9; // 被点赞数
+  int64 star_count = 10; // 被收藏数
+  int64 self_star_count = 11; // 自己收藏作品数
+  int64 self_like_count = 12; // 自己点赞作品数
+  int64 live_count = 13; // 直播次数
+  int64 work_count = 14; // 作品数
+  int64 friend_count = 15; // 朋友数
+  string phone = 16; // 手机号
+  string email = 17; // 邮箱
+  uint32 status = 18; // 状态
+}
+
+// 登录响应
+message LoginResp {
+  string access_token = 1; // 访问令牌
+  string refresh_token = 2; // 刷新令牌
+  int64 user_id = 3; // 用户ID
+  User user_info = 4; // 用户信息
+}
+
+// 更新用户信息请求
+message UpdateUserInfoReq {
+  uint32 id = 1; // 用户ID
+  optional string nickname = 2; // 昵称
+  optional string avatar = 3; // 头像
+  optional uint32 gender = 4; // 性别
+  optional uint32 role = 5; // 角色
+  optional string phone = 6; // 手机号
+  optional string email = 7; // 邮箱
+}
+
+// 更新用户信息响应
+message UpdateUserInfoResp {
+  User user_info = 1; // 更新后的用户信息
+}
+
+// 登出请求
+message LogoutReq {
+  string access_token = 1;
+  string refresh_token = 2; 
+}
+
+message LogoutResp {}
+
+// 关注用户请求
+message FollowUserReq {
+  uint32 user_id = 1; // 用户ID
+  uint32 action_id = 2; // 动作ID
+  int32 action = 3; // 动作（1:关注，2:取关）
+}
+
+message FollowUserResp {
+
+}
+
+
+// 粉丝列表请求
+message FollowerListReq {
+  uint32 action_id = 1; // 动作ID
+  int32 page = 2; // 页码
+  int32 page_size = 3; // 每页数量
+  int32 total = 4; // 总数
+}
+
+// 粉丝列表响应
+message FollowerListResp {
+  int32 total = 1; // 总数
+  repeated User list = 2; // 用户列表
+}
+
+// 关注列表请求
+message FollowingListReq {
+  uint32 action_id = 1; // 动作ID
+  int32 page = 2; // 页码
+  int32 page_size = 3; // 每页数量
+  int32 total = 4; // 总数
+}
+
+// 关注列表响应
+message FollowingListResp {
+  int32 total = 1; // 总数
+  repeated User list = 2; // 用户列表
+}
+
+// 好友列表请求
+message FriendListReq {
+  uint32 action_id = 1; // 动作ID
+  int32 page = 2; // 页码
+  int32 page_size = 3; // 每页数量
+  int32 total = 4; // 总数
+}
+
+// 好友列表响应
+message FriendListResp {
+  int32 total = 1; // 总数
+  repeated User list = 2; // 用户列表
+}
+
+// 用户上传文件请求
+message UserUploadFileReq {
+  string kind = 1; // 文件类型（avatar, cover, video）
+}
+
+// 用户上传文件响应
+message UserUploadFileResp {
+  string url = 1; // 文件URL
+  string cover_url = 2; // 封面URL
+}
+
+// 服务定义
+service UserRpcService {
+  rpc LoginWithUsername(LoginWithUsernameReq) returns (LoginResp);
+  rpc LoginWithEmail(LoginWithEmailReq) returns (LoginResp);
+  rpc LoginWithPhone(LoginWithPhoneReq) returns (LoginResp);
+  rpc Register(RegisterReq) returns (LoginResp);
+  rpc UpdateUserInfo(UpdateUserInfoReq) returns (UpdateUserInfoResp);
+  rpc Logout(LogoutReq) returns (LogoutResp);
+  rpc FollowUser(FollowUserReq) returns (FollowUserResp);
+  rpc FollowerList(FollowerListReq) returns (FollowerListResp);
+  rpc FollowingList(FollowingListReq) returns (FollowingListResp);
+  rpc FriendList(FriendListReq) returns (FriendListResp);
+  rpc UserUploadFile(UserUploadFileReq) returns (UserUploadFileResp);
+}

@@ -1,0 +1,385 @@
+version: '3'
+services:
+  #  cctiktok:
+  #    container_name: cctiktok
+  #    restart: unless-stopped
+  #    privileged: true
+  #    ports:
+  #        - 8888:8888
+  #    networks:
+  #      - tiktok-network
+  #    image: golang:alpine
+  ##    container_config:
+  #        context: .
+  #        dockerfile: ./cctiktok.Dockerfile
+  zlmediakit:
+    image: zlmediakit/zlmediakit:master
+    container_name: zlmediakit
+    privileged: true
+    restart: unless-stopped
+    networks:
+      - tiktok-network
+    command: /opt/media/bin/MediaServer -c /opt/media/conf/config.ini
+    ports:
+      - "1935:1935"
+      - "8081:8081"
+      - "554:554"
+      - "9000:9000/udp"
+      - "10000:10000/tcp"
+      - "10000:10000/udp"
+      - "8090:80"
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      - ./container_config/zlmediakit/config.ini:/opt/media/conf/config.ini
+      - ./data/zlmediakit/data/log:/opt/media/bin/log
+      - ./data/zlmediakit/data/www:/opt/media/bin/www
+
+#  nacos:
+#    image: nacos/nacos-server:2.0.3
+#    container_name: nacos
+#    environment:
+#      - TZ=Asia/Shanghai
+#      - MODE=standalone
+#      - SPRING_DATASOURCE_PLATFORM=mysql
+#      - MYSQL_SERVICE_HOST=mysql
+#      - MYSQL_SERVICE_PORT=3306
+#      - MYSQL_SERVICE_USER=root
+#      - MYSQL_SERVICE_PASSWORD=asdasd
+#      - MYSQL_SERVICE_DB_NAME=nacos
+#      - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+#    ports:
+#      - "8848:8848"
+#      - "9848:9848"
+#    networks:
+#      - tiktok-network
+#    volumes:
+#      - ./data/nacos/data:/home/nacos/data    # 将Nacos的数据目录挂载到主机
+#    restart: unless-stopped
+  consul:
+    image: "hashicorp/consul:1.20.0"
+    ports:
+      - "8500:8500"   # Consul Web UI 和 API 端口
+    volumes:
+      - ./data/consul/data:/consul/data  # 将主机的 consul/data 目录挂载到容器内部的 /consul/data
+    networks:
+        - tiktok-network
+    restart: unless-stopped
+
+
+  redis:
+    container_name: redis
+    image: redis:6.2.5
+    ports:
+      - "36379:6379"
+    networks:
+      - tiktok-network
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      - ./data/redis/data:/data:rw
+    restart: unless-stopped
+    privileged: true
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      TZ: "Asia/Shanghai"
+      MYSQL_ROOT_PASSWORD: "asdasd"
+    ports:
+      - 13306:3306
+    volumes:
+      - ./data/mysql/data:/var/lib/mysql
+      - ./data/mysql/conf.d:/etc/mysql/conf.d
+      - ./container_config/mysql/my.cnf:/etc/mysql/my.cnf
+    command:
+      - /bin/bash
+      - -c
+      - |
+        chmod 644 /etc/mysql/my.cnf && \
+        exec mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    privileged: true
+    restart: unless-stopped
+    networks:
+      - tiktok-network
+
+#  etcd:
+#    image: quay.io/coreos/etcd:v3.4.15
+#    container_name: etcd
+#    command: |
+#      /usr/local/bin/etcd
+#        --name etcd0
+#        --advertise-client-urls http://etcd:2379
+#        --listen-client-urls http://0.0.0.0:2379
+#        --listen-peer-urls http://0.0.0.0:2380
+#    ports:
+#      - "2379:2379"
+#      - "2380:2380"
+#    networks:
+#      - tiktok-network
+#    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.28.1
+    container_name: prometheus
+    volumes:
+      - ./container_config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./data/prometheus/data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - "9091:9090"
+    networks:
+      - tiktok-network
+    restart: unless-stopped
+
+  otel-collector:
+    container_name: otel-collector
+    image: otel/opentelemetry-collector-contrib:0.88.0
+    command: [ "--config=/etc/otel-collector-config.yaml" ]
+    volumes:
+      - ./container_config/otel-collector/config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "1888:1888"   # pprof extension
+      - "8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "4317:4317"   # OTLP gRPC receiver
+      - "55679" # zpages extension
+    depends_on:
+      - jaeger
+    networks:
+        - tiktok-network
+    restart: unless-stopped
+
+  # Jaeger
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one:1
+    ports:
+      - "16686:16686"
+      - "14250:14250"
+      - "6831:6831"
+      - "5775:5775/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "14268:14268"
+      - "9411:9411"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - SPAN_STORAGE_TYPE=elasticsearch
+      - ES_SERVER_URLS=http://elasticsearch:9200
+      - LOG_LEVEL=debug
+    restart: unless-stopped
+    networks:
+      - tiktok-network
+
+
+  victoriametrics:
+    container_name: victoriametrics
+    image: victoriametrics/victoria-metrics:latest
+    ports:
+      - "8428:8428"
+      - "8089:8089"
+      - "8089:8089/udp"
+      - "2003:2003"
+      - "2003:2003/udp"
+      - "4242:4242"
+    command:
+      - '--storageDataPath=/storage'
+      - '--graphiteListenAddr=:2003'
+      - '--opentsdbListenAddr=:4242'
+      - '--httpListenAddr=:8428'
+      - '--influxListenAddr=:8089'
+    restart: unless-stopped
+    networks:
+      - tiktok-network
+
+  grafane:
+    image: grafana/grafana:8.0.6
+    container_name: grafana
+    hostname: grafana
+    user: root
+    environment:
+      TZ: "Asia/Shanghai"
+    ports:
+      - "3001:3000"
+    networks:
+      - tiktok-network
+    volumes:
+      - ./data/grafana/data:/var/lib/grafana
+    restart: unless-stopped
+
+  ngnix:
+    image: nginx:1.21.5
+    container_name: nginx
+    ports:
+      - 8082:8081
+    volumes:
+      - ./container_config/nginx/conf.d/nginx.conf:/etc/nginx/nginx.conf
+      - ./data/nginx/logs:/var/log/nginx
+    networks:
+      - tiktok-network
+    privileged: true
+    environment:
+      - TZ=Asia/Shanghai
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.4
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - TZ=Asia/Shanghai
+      - cluster.routing.allocation.disk.watermark.low=90%
+      - cluster.routing.allocation.disk.watermark.high=95%
+      - cluster.routing.allocation.disk.watermark.flood_stage=98%
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - tiktok-network
+    restart: unless-stopped
+    user: root
+    privileged: true
+    volumes:
+      - ./data/elasticsearch/data:/usr/share/elasticsearch/data
+      - ./data/elasticsearch/logs:/usr/share/elasticsearch/logs
+
+
+#  zookeeper:
+#    image: wurstmeister/zookeeper
+#    container_name: zookeeper
+#    environment:
+#      TZ: "Asia/Shanghai"
+#    restart: unless-stopped
+#    ports:
+#      - "2181:2181"
+#    networks:
+#      - tiktok-network
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+      - "9098:9098"
+    environment:
+      - BITNAMI_DEBUG=yes
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_LISTENERS=CONTROLLER://:9094,BROKER://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=BROKER://kafka:9092,EXTERNAL://172.31.62.191:9093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=BROKER
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9094
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - JMX_PORT=9998
+      - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=9998
+    restart: unless-stopped
+    networks:
+      - tiktok-network
+    volumes:
+      - ./data/kafka/data:/bitnami/kafka
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.13.4
+    container_name: logstash
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    environment:
+      - TZ=Asia/Shanghai
+    networks:
+      - tiktok-network
+    volumes:
+      - ./container_config/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+      - kafka
+    restart: unless-stopped
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.13.4
+    container_name: filebeat
+    user: root
+    volumes:
+      - ./container_config/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./data/nginx/logs:/var/log/nginx:ro
+      - ./data/app/logs:/var/log/app:ro  # 挂载 logrus 日志目录
+    environment:
+      - TZ=Asia/Shanghai
+    depends_on:
+      - kafka
+    networks:
+      - tiktok-network
+    restart: unless-stopped
+    command: >
+      sh -c "chmod go-w /usr/share/filebeat/filebeat.yml && /usr/local/bin/docker-entrypoint -e"
+
+
+
+
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.13.4
+    container_name: kibana
+    environment:
+      - elasticsearch.hosts=http://elasticsearch:9200
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    networks:
+      - tiktok-network
+    ports:
+      - "5603:5601"
+    depends_on:
+      - elasticsearch
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 18080:8080
+    environment:
+      - KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_NAME=my-kafka-cluster
+      - KAFKA_CLUSTERS_0_METRICS_PORT=9998
+    volumes:
+      - ./container_config/kafka_ui/config.yml:/etc/kafkaui/dynamic_config.yaml
+    depends_on:
+      - kafka
+    networks:
+      - tiktok-network
+
+
+  dtm:
+    image: yedf/dtm:latest
+    container_name: dtm
+    ports:
+      - "36790:36790"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: asdasd
+      MYSQL_DB: dtm
+    entrypoint:
+      - "/app/dtm/dtm"
+      - "-c=/app/dtm/config/config.yaml"
+    volumes:
+      - ./container_config/dtm/config.yaml:/app/dtm/config/config.yaml
+    depends_on:
+      - mysql
+    networks:
+      - tiktok-network
+    restart: unless-stopped
+networks:
+  tiktok-network:
+    driver: bridge
+
+# redis-cli --cluster create 172.21.0.2:6379 172.21.0.12:6379 172.21.0.11:6379  --cluster-replicas 0

@@ -26,7 +26,7 @@ export const LiveBoxContent: React.FC<LiveBoxContentProps> = ({url,poster,pullTo
             id: 'mse',
             fluid: true,
             plugins: [FlvPlugin],
-            videoInit: true,
+            autoplay: true,
             // poster: poster,
             isLive: true,
         });

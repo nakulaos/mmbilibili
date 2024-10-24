@@ -1,0 +1,77 @@
+.live-list-container {
+  padding: 16px;
+  background-color: #f9f9f9;
+
+  .tabs {
+    display: flex;
+    justify-content: start;
+    margin-bottom: 16px;
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: background-color 0.3s;
+      font-size: 10px;
+
+      &.active {
+        font-weight: bold;
+        color: #1890ff;
+        background-color: rgba(24, 144, 255, 0.1);
+      }
+
+      &:hover {
+        background-color: rgba(24, 144, 255, 0.1);
+      }
+    }
+  }
+
+  .live-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+
+    .live-card-wrapper {
+      flex: 1 1 calc(20% - 1px);
+      max-width: calc(20% - 1px);
+      overflow: hidden;
+
+
+      // 针对超大屏幕（1200px以上）
+      @media (min-width: 1200px) {
+        flex: 1 1 calc(16.666% - 1px);
+        max-width: calc(16.666% - 1px);
+      }
+
+      // 针对普通PC屏幕（992px到1200px）
+      @media (max-width: 1200px) and (min-width: 992px) {
+        flex: 1 1 calc(20% - 1px);
+        max-width: calc(20% - 1px);
+      }
+
+      // 针对平板设备（768px到992px）
+      @media (max-width: 992px) and (min-width: 768px) {
+        flex: 1 1 calc(25% - 1px);
+        max-width: calc(25% - 1px);
+      }
+
+      // 针对小屏幕（480px到768px）
+      @media (max-width: 768px) and (min-width: 480px) {
+        flex: 1 1 calc(33.3% - 1px);
+        max-width: calc(33.3% - 1px);
+      }
+
+      @media (max-width: 480px) and (min-width: 375px) {
+        flex: 1 1 calc(50% - 1px);
+        max-width: calc(50% - 1px);
+      }
+
+      // 针对超小屏幕（480px以下）
+      @media (max-width: 375px) {
+        flex: 1 1 100%; // 超小屏幕上显示一列
+        max-width: 100%;
+      }
+    }
+  }
+
+}

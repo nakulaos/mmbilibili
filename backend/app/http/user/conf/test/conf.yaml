@@ -1,0 +1,40 @@
+hertz:
+  service: "userapi"
+  address: ":18081"
+  enable_pprof: true
+  enable_gzip: true
+  enable_access_log: true
+  log:
+    log_level: debug
+    log_file_name: "log/hertz.log"
+    log_max_size: 10
+    log_max_age: 3
+    log_max_backups: 50
+open_telemetry:
+  open_telemetry_collector_addr: localhost:4317
+registry:
+  registry_address: 127.0.0.1:8500
+  weight: 10
+resolve:
+  resolve_address: 127.0.0.1:8500
+user_rpc:
+  conn_timeout: 3
+  rpc_timeout: 5
+  name: "userrpc"
+
+app:
+  access_token_expire: 30
+  refresh_token_expire: 360
+  access_token_secret: asdasd
+  refresh_token_secret: asdasdasdasd
+
+
+redis:
+  addrs:
+    - 0.0.0.0:36379
+  client_name: "userapi"
+  dial_timeout: 1
+  read_timeout: 1
+  write_timeout: 1
+  max_active_coons: 15
+  min_idle_coons: 10
