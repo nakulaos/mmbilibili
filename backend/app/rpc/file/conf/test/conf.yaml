@@ -1,0 +1,35 @@
+kitex:
+  service: "filerpc"
+  address: ":28889"
+  log:
+    log_level: debug
+    log_file_name: "log/kitex.log"
+    log_max_size: 10
+    log_max_age: 3
+    log_max_backups: 50
+
+registry:
+  registry_address: 127.0.0.1:8500
+  username: ""
+  password: ""
+
+open_telemetry:
+  open_telemetry_collector_addr: localhost:4317
+
+mysql:
+  dsn: "root:asdasd@tcp(127.0.0.1:13306)/mmbilibili?charset=utf8mb4&parseTime=True&loc=Local"
+  max_open_conns: 8
+  max_idle_conns: 4
+  conn_max_idle_time: 240 #min
+minio:
+  endpoint: "localhost:9000"
+  access_key: "Yz5N8GaP07eIu2vOpOre"
+  secret_access_key: "qGg2D5AqyNW49jcr6jW2m1SB82TfZnEwyAYsCnQU"
+  use_ssl: false
+  bucket_name: "mmbilibili"
+  base_path: "file"
+  location: "cn-north-1"
+app:
+  file_max_size: 5120
+  chunk_max_size: 64
+  presigned_upload_part_url_expire_time: 60 #min

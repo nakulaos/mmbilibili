@@ -2,7 +2,7 @@ package service
 
 import (
 	"backend/app/common/ecode"
-	"backend/app/rpc/user/biz/dal"
+	"backend/app/rpc/user/biz/global"
 	user "backend/app/rpc/user/kitex_gen/user"
 	"context"
 )
@@ -17,10 +17,10 @@ func NewLogoutService(ctx context.Context) *LogoutService {
 func (s *LogoutService) Run(req *user.LogoutReq) (resp *user.LogoutResp, err error) {
 	accessToken := req.AccessToken
 	refreshToken := req.RefreshToken
-	if err = dal.UserDalInstance.AddTokenToBlackList(s.ctx, accessToken); err != nil {
+	if err = global.UserDal.AddTokenToBlackList(s.ctx, accessToken); err != nil {
 		return nil, ecode.ServerError
 	}
-	if err = dal.UserDalInstance.AddTokenToBlackList(s.ctx, refreshToken); err != nil {
+	if err = global.UserDal.AddTokenToBlackList(s.ctx, refreshToken); err != nil {
 		return nil, ecode.ServerError
 	}
 

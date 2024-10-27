@@ -1,0 +1,269 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "File API",
+    "description": "API for file upload functionality",
+    "version": "1.0.0"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/auth/file/complete_multipart": {
+      "post": {
+        "summary": "完成分块上传",
+        "operationId": "CompleteMultipart",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/CompleteMultipartResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 完成分块上传请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CompleteMultipartReq"
+            }
+          }
+        ],
+        "tags": [
+          "FileAPI"
+        ]
+      }
+    },
+    "/v1/auth/file/multi_upload": {
+      "post": {
+        "summary": "上传文件",
+        "operationId": "NewMultiUpload",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/NewMultiUploadResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 多文件上传请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewMultiUploadReq"
+            }
+          }
+        ],
+        "tags": [
+          "FileAPI"
+        ]
+      }
+    },
+    "/v1/auth/file/multi_upload_uri": {
+      "post": {
+        "summary": "获取大文件上传请求的 URI",
+        "operationId": "GetMultiUploadUri",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetMultiUploadUriResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 获取大文件上传请求的 URI 请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetMultiUploadUriReq"
+            }
+          }
+        ],
+        "tags": [
+          "FileAPI"
+        ]
+      }
+    },
+    "/v1/auth/file/success_chunks": {
+      "post": {
+        "summary": "获取已经上传的分块",
+        "operationId": "GetSuccessChunks",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetSuccessChunksResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 获取已经上传的分块请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetSuccessChunksReq"
+            }
+          }
+        ],
+        "tags": [
+          "FileAPI"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "CompleteMultipartReq": {
+      "type": "object",
+      "properties": {
+        "file_hash": {
+          "type": "string",
+          "description": " 文件哈希值"
+        }
+      },
+      "title": "CompleteMultipartReq",
+      "required": [
+        "file_hash"
+      ]
+    },
+    "CompleteMultipartResp": {
+      "type": "object",
+      "title": "CompleteMultipartResp"
+    },
+    "GetMultiUploadUriReq": {
+      "type": "object",
+      "properties": {
+        "file_hash": {
+          "type": "string",
+          "description": " 文件哈希值"
+        },
+        "chunk_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 分块 ID"
+        },
+        "chunk_size": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 分块大小"
+        }
+      },
+      "title": "GetMultiUploadUriReq",
+      "required": [
+        "file_hash",
+        "chunk_id",
+        "chunk_size"
+      ]
+    },
+    "GetMultiUploadUriResp": {
+      "type": "object",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "description": " URI"
+        }
+      },
+      "title": "GetMultiUploadUriResp",
+      "required": [
+        "uri"
+      ]
+    },
+    "GetSuccessChunksReq": {
+      "type": "object",
+      "properties": {
+        "file_hash": {
+          "type": "string",
+          "description": " 文件哈希值"
+        }
+      },
+      "title": "GetSuccessChunksReq",
+      "required": [
+        "file_hash"
+      ]
+    },
+    "GetSuccessChunksResp": {
+      "type": "object",
+      "properties": {
+        "is_upload": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否已经上传"
+        },
+        "chunks": {
+          "type": "string",
+          "description": " 已经上传的分块"
+        }
+      },
+      "title": "GetSuccessChunksResp",
+      "required": [
+        "is_upload",
+        "chunks"
+      ]
+    },
+    "NewMultiUploadReq": {
+      "type": "object",
+      "properties": {
+        "file_hash": {
+          "type": "string",
+          "description": " 文件内容的唯一哈希值"
+        },
+        "chunk_total_number": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 分块总数"
+        },
+        "file_name": {
+          "type": "string",
+          "description": " 文件名"
+        },
+        "file_size": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 文件大小"
+        },
+        "file_type": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 文件类型"
+        }
+      },
+      "title": "NewMultiUploadReq",
+      "required": [
+        "file_hash",
+        "chunk_total_number",
+        "file_name",
+        "file_size",
+        "file_type"
+      ]
+    },
+    "NewMultiUploadResp": {
+      "type": "object",
+      "title": "NewMultiUploadResp"
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "description": "Enter JWT Bearer token **_only_**",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

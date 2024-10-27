@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package file;
+
+option go_package = "/file";
+
+message NewMultiUploadReq{ // 大文件上传请求
+  string FileHash = 1; // 文件内容的唯一哈希值
+  int64 ChunkTotalNumber = 2; // 分块总数
+  int64 FileSize = 3; // 分块大小
+  string FileName = 4; // 文件名
+  int64 UserID = 5; // 用户ID
+  int32 FileType = 6; // 文件类型，文件属性比如图片，视频等
+}
+
+message NewMultiUploadResp{
+
+}
+
+
+message GetMultiUploadUriReq { // 获取大文件上传请求
+  string FileHash = 1;
+  int64 UserID = 2; // 用户ID
+  int64 ChunkID = 3; // 分块ID
+  int64 ChunkSize = 4; // 分块大小
+}
+
+message GetMultiUploadUriResp {
+  string Uri = 1;
+}
+
+message CompleteMultipartReq{
+  string FileHash = 1;
+  int64 UserID = 2;
+}
+
+message CompleteMultipartResp{
+}
+
+message GetSuccessChunksReq {
+  string FileHash = 1;
+  int64 UserID = 2;
+}
+
+message GetSuccessChunksResp {
+  bool IsUpload = 1;
+  string Chunks = 2;
+}
+
+service FileService {
+  rpc NewMultiUpload(NewMultiUploadReq) returns (NewMultiUploadResp) {} // 大文件上传请求
+  rpc GetMultiUploadUri(GetMultiUploadUriReq) returns (GetMultiUploadUriResp) {} // 获取大文件上传请求的uri
+  rpc CompleteMultipart(CompleteMultipartReq) returns (CompleteMultipartResp) {} // 完成
+  rpc GetSuccessChunks(GetSuccessChunksReq) returns (GetSuccessChunksResp) {} // 获取已经上传的分块
+}
+
+

@@ -3,7 +3,7 @@ package service
 import (
 	"backend/app/common/constant"
 	"backend/app/common/ecode"
-	"backend/app/rpc/user/biz/dal"
+	"backend/app/rpc/user/biz/global"
 	"backend/app/rpc/user/biz/model"
 	user "backend/app/rpc/user/kitex_gen/user"
 	"backend/library/metric"
@@ -30,7 +30,7 @@ func (s *UpdateUserInfoService) Run(req *user.UpdateUserInfoReq) (resp *user.Upd
 
 	userModel := buildUserModel(req)
 
-	f, err := dal.UserDalInstance.ExistUserByID(s.ctx, userModel.ID)
+	f, err := global.UserDal.ExistUserByID(s.ctx, userModel.ID)
 	if err != nil {
 		return nil, ecode.ServerError
 	}
@@ -39,7 +39,7 @@ func (s *UpdateUserInfoService) Run(req *user.UpdateUserInfoReq) (resp *user.Upd
 		return nil, ecode.UserNotExistError.WithTemplateData(map[string]string{"UID": strconv.Itoa(int(req.Id))})
 	}
 
-	err = dal.UserDalInstance.UpdateUserByID(s.ctx, userModel.ID, userModel)
+	err = global.UserDal.UpdateUserByID(s.ctx, userModel.ID, userModel)
 	if err != nil {
 		return nil, ecode.ServerError
 	}
@@ -52,12 +52,12 @@ func (s *UpdateUserInfoService) Run(req *user.UpdateUserInfoReq) (resp *user.Upd
 
 	eg.Go(func() error {
 		var e error
-		userInfo, e = dal.UserDalInstance.GetUserByID(s.ctx, userModel.ID)
+		userInfo, e = global.UserDal.GetUserByID(s.ctx, userModel.ID)
 		return e
 	})
 	eg.Go(func() error {
 		var e error
-		userStats, e = dal.UserDalInstance.GetUserRelevantCountByID(s.ctx, userModel.ID)
+		userStats, e = global.UserDal.GetUserRelevantCountByID(s.ctx, userModel.ID)
 		return e
 	})
 

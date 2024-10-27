@@ -1,0 +1,827 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "User API",
+    "description": "API for user management functionalities",
+    "version": "1.0.0"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/auth/user/follow": {
+      "post": {
+        "summary": "关注或取消关注用户",
+        "operationId": "FollowUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FollowUserResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 关注/取关用户请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FollowUserReq"
+            }
+          }
+        ],
+        "tags": [
+          "UserAPI"
+        ]
+      }
+    },
+    "/v1/auth/user/info": {
+      "post": {
+        "summary": "更新用户信息",
+        "operationId": "UpdateUserInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UpdateUserInfoResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 更新用户信息请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateUserInfoReq"
+            }
+          }
+        ],
+        "tags": [
+          "UserAPI"
+        ]
+      }
+    },
+    "/v1/auth/user/logout": {
+      "post": {
+        "summary": "用户登出",
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LogoutResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 用户登出请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LogoutReq"
+            }
+          }
+        ],
+        "tags": [
+          "UserAPI"
+        ]
+      }
+    },
+    "/v1/auth/user/refresh": {
+      "post": {
+        "summary": "刷新令牌",
+        "operationId": "RefreshToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RefreshTokenResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 刷新令牌请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RefreshTokenReq"
+            }
+          }
+        ],
+        "tags": [
+          "UserAPI"
+        ]
+      }
+    },
+    "/v1/user/followers": {
+      "get": {
+        "summary": "获取粉丝列表",
+        "operationId": "FollowerList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FollowerListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "description": " 页码",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "page_size",
+            "description": " 每页大小",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserAPI"
+        ]
+      }
+    },
+    "/v1/user/following": {
+      "get": {
+        "summary": "获取关注列表",
+        "operationId": "FollowingList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FollowingListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "description": " 页码",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "page_size",
+            "description": " 每页大小",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserAPI"
+        ]
+      }
+    },
+    "/v1/user/friends": {
+      "get": {
+        "summary": "获取好友列表",
+        "operationId": "FriendList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FriendListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "description": " 页码",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "page_size",
+            "description": " 每页大小",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserAPI"
+        ]
+      }
+    },
+    "/v1/user/login/email": {
+      "post": {
+        "summary": "邮箱登录",
+        "operationId": "LoginWithEmail",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LoginResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 邮箱登录请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginWithEmailReq"
+            }
+          }
+        ],
+        "tags": [
+          "UserAPI"
+        ]
+      }
+    },
+    "/v1/user/login/phone": {
+      "post": {
+        "summary": "手机号登录",
+        "operationId": "LoginWithPhone",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LoginResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 手机号登录请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginWithPhoneReq"
+            }
+          }
+        ],
+        "tags": [
+          "UserAPI"
+        ]
+      }
+    },
+    "/v1/user/login/username": {
+      "post": {
+        "summary": "用户名登录",
+        "operationId": "LoginWithUsername",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LoginResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 用户名登录请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginWithUsernameReq"
+            }
+          }
+        ],
+        "tags": [
+          "UserAPI"
+        ]
+      }
+    },
+    "/v1/user/register": {
+      "post": {
+        "summary": "用户注册",
+        "operationId": "Register",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LoginResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 用户注册请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterReq"
+            }
+          }
+        ],
+        "tags": [
+          "UserAPI"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "FollowUserReq": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 用户ID"
+        },
+        "action": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 操作，1: 关注, 2: 取消关注"
+        }
+      },
+      "title": "FollowUserReq",
+      "required": [
+        "user_id",
+        "action"
+      ]
+    },
+    "FollowUserResp": {
+      "type": "object",
+      "title": "FollowUserResp"
+    },
+    "FollowerListReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 页码"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 每页大小"
+        }
+      },
+      "title": "FollowerListReq",
+      "required": [
+        "page",
+        "page_size"
+      ]
+    },
+    "FollowerListResp": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 粉丝总数"
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          },
+          "description": " 粉丝列表"
+        }
+      },
+      "title": "FollowerListResp",
+      "required": [
+        "total",
+        "list"
+      ]
+    },
+    "FollowingListReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 页码"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 每页大小"
+        }
+      },
+      "title": "FollowingListReq",
+      "required": [
+        "page",
+        "page_size"
+      ]
+    },
+    "FollowingListResp": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 关注总数"
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          },
+          "description": " 关注列表"
+        }
+      },
+      "title": "FollowingListResp",
+      "required": [
+        "total",
+        "list"
+      ]
+    },
+    "FriendListReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 页码"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 每页大小"
+        }
+      },
+      "title": "FriendListReq",
+      "required": [
+        "page",
+        "page_size"
+      ]
+    },
+    "FriendListResp": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 好友总数"
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          },
+          "description": " 好友列表"
+        }
+      },
+      "title": "FriendListResp",
+      "required": [
+        "total",
+        "list"
+      ]
+    },
+    "LoginResp": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string",
+          "description": " 访问令牌"
+        },
+        "refresh_token": {
+          "type": "string",
+          "description": " 刷新令牌"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 用户ID"
+        },
+        "user_info": {
+          "$ref": "#/definitions/User",
+          "description": " 用户信息"
+        }
+      },
+      "title": "LoginResp",
+      "required": [
+        "access_token",
+        "refresh_token",
+        "user_id",
+        "user_info"
+      ]
+    },
+    "LoginWithEmailReq": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": " 邮箱"
+        },
+        "password": {
+          "type": "string",
+          "description": " 密码"
+        }
+      },
+      "title": "LoginWithEmailReq",
+      "required": [
+        "email",
+        "password"
+      ]
+    },
+    "LoginWithPhoneReq": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "description": " 手机号"
+        },
+        "password": {
+          "type": "string",
+          "description": " 密码"
+        }
+      },
+      "title": "LoginWithPhoneReq",
+      "required": [
+        "phone",
+        "password"
+      ]
+    },
+    "LoginWithUsernameReq": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": " 用户名"
+        },
+        "password": {
+          "type": "string",
+          "description": " 密码"
+        }
+      },
+      "title": "LoginWithUsernameReq",
+      "required": [
+        "username",
+        "password"
+      ]
+    },
+    "LogoutReq": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string",
+          "description": " 访问令牌"
+        },
+        "refresh_token": {
+          "type": "string",
+          "description": " 刷新令牌"
+        }
+      },
+      "title": "LogoutReq",
+      "required": [
+        "access_token",
+        "refresh_token"
+      ]
+    },
+    "LogoutResp": {
+      "type": "object",
+      "title": "LogoutResp"
+    },
+    "RefreshTokenReq": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string",
+          "description": " 刷新令牌"
+        }
+      },
+      "title": "RefreshTokenReq",
+      "required": [
+        "refresh_token"
+      ]
+    },
+    "RefreshTokenResp": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string",
+          "description": " 访问令牌"
+        },
+        "refresh_token": {
+          "type": "string",
+          "description": " 刷新令牌"
+        }
+      },
+      "title": "RefreshTokenResp",
+      "required": [
+        "access_token",
+        "refresh_token"
+      ]
+    },
+    "RegisterReq": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": " 用户名"
+        },
+        "password": {
+          "type": "string",
+          "description": " 密码"
+        }
+      },
+      "title": "RegisterReq",
+      "required": [
+        "username",
+        "password"
+      ]
+    },
+    "UpdateUserInfoReq": {
+      "type": "object",
+      "properties": {
+        "nickname": {
+          "type": "string",
+          "description": " 昵称"
+        },
+        "avatar": {
+          "type": "string",
+          "description": " 头像URL"
+        },
+        "gender": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 性别"
+        },
+        "role": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 角色"
+        },
+        "phone": {
+          "type": "string",
+          "description": " 手机号"
+        },
+        "email": {
+          "type": "string",
+          "description": " 邮箱"
+        }
+      },
+      "title": "UpdateUserInfoReq",
+      "required": [
+        "nickname",
+        "avatar",
+        "gender",
+        "role",
+        "phone",
+        "email"
+      ]
+    },
+    "UpdateUserInfoResp": {
+      "type": "object",
+      "properties": {
+        "user_info": {
+          "$ref": "#/definitions/User",
+          "description": " 用户信息"
+        }
+      },
+      "title": "UpdateUserInfoResp",
+      "required": [
+        "user_info"
+      ]
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 用户ID"
+        },
+        "username": {
+          "type": "string",
+          "description": " 用户名"
+        },
+        "nickname": {
+          "type": "string",
+          "description": " 昵称"
+        },
+        "avatar": {
+          "type": "string",
+          "description": " 头像URL"
+        },
+        "gender": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 性别，0: 未知, 1: 男, 2: 女"
+        },
+        "role": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 用户角色，0: 普通用户, 1: 管理员"
+        },
+        "follower_count": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 粉丝数量"
+        },
+        "following_count": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 关注数量"
+        },
+        "like_count": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 点赞数"
+        },
+        "star_count": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 收藏数"
+        },
+        "self_star_count": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 自己的收藏数"
+        },
+        "self_like_count": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 自己的点赞数"
+        },
+        "live_count": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 直播次数"
+        },
+        "work_count": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 作品数量"
+        },
+        "friend_count": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 好友数量"
+        },
+        "phone": {
+          "type": "string",
+          "description": " 手机号"
+        },
+        "email": {
+          "type": "string",
+          "description": " 邮箱"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 用户状态"
+        }
+      },
+      "title": "User",
+      "required": [
+        "id",
+        "username",
+        "nickname",
+        "avatar",
+        "gender",
+        "role",
+        "follower_count",
+        "following_count",
+        "like_count",
+        "star_count",
+        "self_star_count",
+        "self_like_count",
+        "live_count",
+        "work_count",
+        "friend_count",
+        "phone",
+        "email",
+        "status"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "description": "Enter JWT Bearer token **_only_**",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

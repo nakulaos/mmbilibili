@@ -44,12 +44,12 @@ var (
 
 	UserDisableError *xerror.XError = xerror.NewXError(200009, i18n.Message{
 		ID:    "UserDisableError",
-		Other: "The user is disabled",
+		Other: "The http is disabled",
 	})
 
 	UserNotAllowLiveError *xerror.XError = xerror.NewXError(200010, i18n.Message{
 		ID:    "UserNotAllowLiveError",
-		Other: "The user is not allowed to live",
+		Other: "The http is not allowed to live",
 	})
 
 	FollowingIsExistError *xerror.XError = xerror.NewXError(200011, i18n.Message{
@@ -64,6 +64,6 @@ var (
 
 	UserRoleNotAllowError *xerror.XError = xerror.NewXError(200013, i18n.Message{
 		ID:    "UserRoleNotAllowError",
-		Other: "The user role right is not allowed",
+		Other: "The http role right is not allowed",
 	})
 )

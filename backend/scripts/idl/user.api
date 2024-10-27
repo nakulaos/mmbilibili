@@ -1,0 +1,192 @@
+// user.api
+syntax = "v1"
+
+info (
+    title:   "User API"
+    desc:    "API for user management functionalities"
+    author:  "Your Name"
+    email:   "your_email@example.com"
+    version: "1.0.0"
+)
+
+type (
+    // 用户基本信息
+    User {
+        Id               int64  `json:"id"`                            // 用户ID
+        Username         string `json:"username"`                      // 用户名
+        Nickname         string `json:"nickname"`                      // 昵称
+        Avatar           string `json:"avatar"`                        // 头像URL
+        Gender           int64  `json:"gender"`                        // 性别，0: 未知, 1: 男, 2: 女
+        Role             int64  `json:"role"`                          // 用户角色，0: 普通用户, 1: 管理员
+        FollowerCount    int64  `json:"follower_count"`                // 粉丝数量
+        FollowingCount   int64  `json:"following_count"`               // 关注数量
+        LikeCount        int64  `json:"like_count"`                    // 点赞数
+        StarCount        int64  `json:"star_count"`                    // 收藏数
+        SelfStarCount    int64  `json:"self_star_count"`               // 自己的收藏数
+        SelfLikeCount    int64  `json:"self_like_count"`               // 自己的点赞数
+        LiveCount        int64  `json:"live_count"`                    // 直播次数
+        WorkCount        int64  `json:"work_count"`                    // 作品数量
+        FriendCount      int64  `json:"friend_count"`                  // 好友数量
+        Phone            string `json:"phone"`                         // 手机号
+        Email            string `json:"email"`                         // 邮箱
+        Status           int64  `json:"status"`                        // 用户状态
+    }
+
+        // 用户名登录请求
+    LoginWithUsernameReq {
+        Username string `json:"username" validate:"required,len=3|12"` // 用户名
+        Password string `json:"password" validate:"required,len=8|20"` // 密码
+    }
+
+        // 邮箱登录请求
+    LoginWithEmailReq {
+        Email    string `json:"email" validate:"required,email"`          // 邮箱
+        Password string `json:"password" validate:"required,len=8|20"` // 密码
+    }
+
+        // 手机号登录请求
+    LoginWithPhoneReq {
+        Phone    string `json:"phone" validate:"required,phone"`          // 手机号
+        Password string `json:"password" validate:"required,len=8|20"` // 密码
+    }
+
+        // 用户注册请求
+    RegisterReq {
+        Username string `json:"username" validate:"required,len=3|12"` // 用户名
+        Password string `json:"password" validate:"required,len=8|20"` // 密码
+    }
+
+        // 登录响应
+    LoginResp {
+        AccessToken string `json:"access_token"` // 访问令牌
+        RefreshToken string `json:"refresh_token"` // 刷新令牌
+        UserID      int64  `json:"user_id"`      // 用户ID
+        UserInfo    User   `json:"user_info"`    // 用户信息
+    }
+
+        // 更新用户信息请求
+    UpdateUserInfoReq {
+        Nickname string `json:"nickname" validate:"len=0|3|12"` // 昵称
+        Avatar   string `json:"avatar"`                           // 头像URL
+        Gender   int64  `json:"gender" validate:"min=0"`         // 性别
+        Role     int64  `json:"role" validate:"min=0"`           // 角色
+        Phone    string `json:"phone" validate:"len=0|phone"`    // 手机号
+        Email    string `json:"email" validate:"len=0|email"`    // 邮箱
+    }
+
+        // 关注/取关用户请求
+    FollowUserReq {
+        UserID int64 `json:"user_id" validate:"required,min=1"`  // 用户ID
+        Action  int64 `json:"action" validate:"required,min=1"`    // 操作，1: 关注, 2: 取消关注
+    }
+
+        // 粉丝列表请求
+    FollowerListReq {
+        Page     int64 `json:"page" validate:"required,min=1"`     // 页码
+        PageSize int64 `json:"page_size" validate:"required,min=1"` // 每页大小
+    }
+
+        // 粉丝列表响应
+    FollowerListResp {
+        Total int64 `json:"total"`           // 粉丝总数
+        List  []User `json:"list"`          // 粉丝列表
+    }
+
+        // 关注列表请求
+    FollowingListReq {
+        Page     int64 `json:"page" validate:"required,min=1"`     // 页码
+        PageSize int64 `json:"page_size" validate:"required,min=1"` // 每页大小
+    }
+
+        // 关注列表响应
+    FollowingListResp {
+        Total int64 `json:"total"`           // 关注总数
+        List  []User `json:"list"`          // 关注列表
+    }
+
+        // 好友列表请求
+    FriendListReq {
+        Page     int64 `json:"page" validate:"required,min=1"`     // 页码
+        PageSize int64 `json:"page_size" validate:"required,min=1"` // 每页大小
+    }
+
+        // 好友列表响应
+    FriendListResp {
+        Total int64 `json:"total"`           // 好友总数
+        List  []User `json:"list"`          // 好友列表
+    }
+
+        // 更新用户信息响应
+    UpdateUserInfoResp {
+        UserInfo User `json:"user_info"` // 用户信息
+    }
+
+        // 用户登出响应
+    LogoutResp {}
+
+        // 关注用户响应
+    FollowUserResp {}
+
+        // 用户登出请求
+    LogoutReq {
+        AccessToken  string `json:"access_token" validate:"required"`  // 访问令牌
+        RefreshToken string `json:"refresh_token" validate:"required"`  // 刷新令牌
+    }
+
+        // 刷新令牌请求
+    RefreshTokenReq {
+        RefreshToken string `json:"refresh_token" validate:"required"` // 刷新令牌
+    }
+
+        // 刷新令牌响应
+    RefreshTokenResp {
+        AccessToken  string `json:"access_token"`  // 访问令牌
+        RefreshToken string `json:"refresh_token"`  // 刷新令牌
+    }
+)
+
+service UserAPI {
+    @doc "用户名登录"
+    @handler LoginWithUsername
+    post /v1/user/login/username (LoginWithUsernameReq) returns (LoginResp)
+
+    @doc "邮箱登录"
+    @handler LoginWithEmail
+    post /v1/user/login/email (LoginWithEmailReq) returns (LoginResp)
+
+    @doc "手机号登录"
+    @handler LoginWithPhone
+    post /v1/user/login/phone (LoginWithPhoneReq) returns (LoginResp)
+
+    @doc "用户注册"
+    @handler Register
+    post /v1/user/register (RegisterReq) returns (LoginResp)
+
+    @doc "更新用户信息"
+    @handler UpdateUserInfo
+    post /v1/auth/user/info (UpdateUserInfoReq) returns (UpdateUserInfoResp)
+
+    @doc "用户登出"
+    @handler Logout
+    post /v1/auth/user/logout (LogoutReq) returns (LogoutResp)
+
+    @doc "关注或取消关注用户"
+    @handler FollowUser
+    post /v1/auth/user/follow (FollowUserReq) returns (FollowUserResp)
+
+    @doc "获取粉丝列表"
+    @handler FollowerList
+    get /v1/user/followers (FollowerListReq) returns (FollowerListResp)
+
+    @doc "获取关注列表"
+    @handler FollowingList
+    get /v1/user/following (FollowingListReq) returns (FollowingListResp)
+
+    @doc "获取好友列表"
+    @handler FriendList
+    get /v1/user/friends (FriendListReq) returns (FriendListResp)
+
+    @doc "刷新令牌"
+    @handler RefreshToken
+    post /v1/auth/user/refresh (RefreshTokenReq) returns (RefreshTokenResp)
+}

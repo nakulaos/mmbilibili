@@ -47,3 +47,6 @@ app:
 
 mysql:
   dsn: "root:asdasd@tcp(127.0.0.1:13306)/mmbilibili?charset=utf8mb4&parseTime=True&loc=Local"
+  max_open_conns: 8
+  max_idle_conns: 4
+  conn_max_idle_time: 240 #min
