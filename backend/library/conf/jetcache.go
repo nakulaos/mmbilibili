@@ -13,6 +13,6 @@ type JETCache struct {
 }
 
 type DBWithJETCache struct {
-	DB       DB       `yaml:"db"`
+	DB       Mysql    `yaml:"db"`
 	JETCache JETCache `yaml:"jet_cache"`
 }

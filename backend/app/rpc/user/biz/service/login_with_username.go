@@ -3,9 +3,8 @@ package service
 import (
 	"backend/app/common/constant"
 	"backend/app/common/ecode"
-	"backend/app/rpc/user/biz/dal"
+	"backend/app/rpc/user/biz/global"
 	"backend/app/rpc/user/biz/model"
-	"backend/app/rpc/user/conf"
 	user "backend/app/rpc/user/kitex_gen/user"
 	"backend/library/metric"
 	"backend/library/tools"
@@ -41,7 +40,7 @@ func (s *LoginWithUsernameService) Run(req *user.LoginWithUsernameReq) (resp *us
 		return nil, ecode.InvalidParamsError.WithTemplateData(map[string]string{"Params": "username or password is empty"})
 	}
 
-	userModel, err := dal.UserDalInstance.GetUserByUserName(s.ctx, username)
+	userModel, err := global.UserDal.GetUserByUserName(s.ctx, username)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ecode.UserNotExistError.WithTemplateData(map[string]string{"UID": username})
@@ -49,7 +48,7 @@ func (s *LoginWithUsernameService) Run(req *user.LoginWithUsernameReq) (resp *us
 		return nil, ecode.ServerError
 	}
 
-	cryptPassword := tools.PasswordEncrypt(userModel.Salt, conf.GetConf().App.Salt, password)
+	cryptPassword := tools.PasswordEncrypt(userModel.Salt, global.Config.App.Salt, password)
 	if userModel.Password != cryptPassword {
 		return nil, ecode.PassWordError
 	}
@@ -59,16 +58,16 @@ func (s *LoginWithUsernameService) Run(req *user.LoginWithUsernameReq) (resp *us
 	}
 
 	userStats := &model.UserRelevantCount{}
-	userStats, err = dal.UserDalInstance.GetUserRelevantCountByID(s.ctx, userModel.ID)
+	userStats, err = global.UserDal.GetUserRelevantCountByID(s.ctx, userModel.ID)
 	if err != nil {
 		return nil, ecode.ServerError
 	}
 
 	var (
-		accessSecret  = conf.GetConf().App.AccessTokenSecret
-		refreshSecret = conf.GetConf().App.RefreshTokenSecret
-		accessExpire  = conf.GetConf().App.AccessTokenExpire
-		refreshExpire = conf.GetConf().App.RefreshTokenExpire
+		accessSecret  = global.Config.App.AccessTokenSecret
+		refreshSecret = global.Config.App.RefreshTokenSecret
+		accessExpire  = global.Config.App.AccessTokenExpire
+		refreshExpire = global.Config.App.RefreshTokenExpire
 	)
 
 	accessToken, refreshToken, err := tools.GenerateDoubleToken(userModel.ID, userModel.Username, accessSecret, refreshSecret, accessExpire, refreshExpire)

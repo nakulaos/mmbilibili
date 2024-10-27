@@ -1,8 +1,7 @@
 package main
 
 import (
-	"backend/app/rpc/user/biz/dal"
-	"backend/app/rpc/user/conf"
+	"backend/app/rpc/user/biz/global"
 	"backend/app/rpc/user/kitex_gen/user/userrpcservice"
 	"context"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -21,20 +20,24 @@ import (
 )
 
 func main() {
-	c := conf.GetConf()
-	r, err := consul.NewConsulRegister(c.Registry.RegistryAddress)
+
+	global.MustInitGlobalVal()
+
+	// 服务注册
+	r, err := consul.NewConsulRegister(global.Config.Registry.RegistryAddress)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// 链路追踪+metric
 	p := provider.NewOpenTelemetryProvider(
-		provider.WithServiceName(c.Kitex.Service),
-		provider.WithExportEndpoint(c.OpenTelemetry.OpenTelemetryCollectorAddr),
+		provider.WithServiceName(global.Config.Kitex.Service),
+		provider.WithExportEndpoint(global.Config.OpenTelemetry.OpenTelemetryCollectorAddr),
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
 
-	addr, err := net.ResolveTCPAddr("tcp", c.Kitex.Address)
+	addr, err := net.ResolveTCPAddr("tcp", global.Config.Kitex.Address)
 	if err != nil {
 		panic(err)
 	}
@@ -43,7 +46,7 @@ func main() {
 	opts = append(opts, server.WithServiceAddr(addr))
 	opts = append(opts,
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
-			ServiceName: c.Kitex.Service,
+			ServiceName: global.Config.Kitex.Service,
 		}),
 		server.WithRegistry(r),
 		server.WithSuite(tracing.NewServerSuite()),
@@ -51,13 +54,13 @@ func main() {
 
 	logger := kitexlogrus.NewLogger()
 	klog.SetLogger(logger)
-	klog.SetLevel(conf.LogLevel())
+	klog.SetLevel(global.LogLevel(global.Config.Kitex.Log.LogLevel))
 	asyncWriter := &zapcore.BufferedWriteSyncer{
 		WS: zapcore.AddSync(&lumberjack.Logger{
-			Filename:   conf.GetConf().Kitex.Log.LogFileName,
-			MaxSize:    conf.GetConf().Kitex.Log.LogMaxSize,
-			MaxBackups: conf.GetConf().Kitex.Log.LogMaxBackups,
-			MaxAge:     conf.GetConf().Kitex.Log.LogMaxAge,
+			Filename:   global.Config.Kitex.Log.LogFileName,
+			MaxSize:    global.Config.Kitex.Log.LogMaxSize,
+			MaxBackups: global.Config.Kitex.Log.LogMaxBackups,
+			MaxAge:     global.Config.Kitex.Log.LogMaxAge,
 		}),
 		FlushInterval: time.Minute,
 	}
@@ -66,17 +69,7 @@ func main() {
 		asyncWriter.Sync()
 	})
 
-	dal.Init(*c)
 	svr := userrpcservice.NewServer(new(UserRpcServiceImpl), opts...)
-
-	//go func() {
-	//	for {
-	//		time.Sleep(3 * time.Second)
-	//		for i := 0; i < 5; i++ {
-	//			metric.IncrGauge(metric.BusinessInfo, "test.kitex.metric")
-	//		}
-	//	}
-	//}()
 
 	err = svr.Run()
 	if err != nil {

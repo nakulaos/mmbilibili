@@ -3,9 +3,8 @@ package service
 import (
 	"backend/app/common/constant"
 	"backend/app/common/ecode"
-	"backend/app/rpc/user/biz/dal"
+	"backend/app/rpc/user/biz/global"
 	"backend/app/rpc/user/biz/model"
-	"backend/app/rpc/user/conf"
 	user "backend/app/rpc/user/kitex_gen/user"
 	"backend/library/metric"
 	"backend/library/tools"
@@ -39,7 +38,7 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.LoginResp, err 
 		return nil, ecode.InvalidParamsError.WithTemplateData(map[string]string{"Params": "username or password is empty"})
 	}
 
-	f, err := dal.UserDalInstance.ExistUserByUserName(s.ctx, username)
+	f, err := global.UserDal.ExistUserByUserName(s.ctx, username)
 	if err != nil {
 		return nil, ecode.ServerError
 	}
@@ -51,16 +50,16 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.LoginResp, err 
 	salt, _ := tools.GenerateSalt()
 	newUser := &model.User{
 		Username: username,
-		Password: tools.PasswordEncrypt(salt, conf.GetConf().App.Salt, password),
+		Password: tools.PasswordEncrypt(salt, global.Config.App.Salt, password),
 		Salt:     salt,
 	}
-	err = dal.UserDalInstance.CreateUser(s.ctx, newUser)
+	err = global.UserDal.CreateUser(s.ctx, newUser)
 
 	var (
-		accessSecret  = conf.GetConf().App.AccessTokenSecret
-		refreshSecret = conf.GetConf().App.RefreshTokenSecret
-		accessExpire  = conf.GetConf().App.AccessTokenExpire
-		refreshExpire = conf.GetConf().App.RefreshTokenExpire
+		accessSecret  = global.Config.App.AccessTokenSecret
+		refreshSecret = global.Config.App.RefreshTokenSecret
+		accessExpire  = global.Config.App.AccessTokenExpire
+		refreshExpire = global.Config.App.RefreshTokenExpire
 	)
 
 	accessToken, refreshToken, err := tools.GenerateDoubleToken(newUser.ID, newUser.Username, accessSecret, refreshSecret, accessExpire, refreshExpire)

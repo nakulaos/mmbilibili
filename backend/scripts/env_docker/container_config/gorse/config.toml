@@ -1,9 +1,9 @@
 [database]
 
 # The database for caching, support Redis, MySQL, Postgres and MongoDB:
-#   redis://<user>:<password>@<host>:<port>/<db_number>
-#   rediss://<user>:<password>@<host>:<port>/<db_number>
-#   redis+cluster://<user>:<password>@<host1>:<port1>,<host2>:<port2>,...,<hostN>:<portN>
+#   redis://<http>:<password>@<host>:<port>/<db_number>
+#   rediss://<http>:<password>@<host>:<port>/<db_number>
+#   redis+cluster://<http>:<password>@<host1>:<port1>,<host2>:<port2>,...,<hostN>:<portN>
 #   postgres://bob:secret@1.2.3.4:5432/mydb?sslmode=verify-full
 #   postgresql://bob:secret@1.2.3.4:5432/mydb?sslmode=verify-full
 #   mongodb://[username:password@]host1[:port1][,...hostN[:portN]][/[defaultauthdb][?options]]
@@ -14,9 +14,9 @@ cache_store = "redis://localhost:6379/0"
 #   mysql://[username[:password]@][protocol[(address)]]/dbname[?param1=value1&...&paramN=valueN]
 #   postgres://bob:secret@1.2.3.4:5432/mydb?sslmode=verify-full
 #   postgresql://bob:secret@1.2.3.4:5432/mydb?sslmode=verify-full
-#   clickhouse://user:password@host[:port]/database?param1=value1&...&paramN=valueN
-#   chhttp://user:password@host[:port]/database?param1=value1&...&paramN=valueN
-#   chhttps://user:password@host[:port]/database?param1=value1&...&paramN=valueN
+#   clickhouse://http:password@host[:port]/database?param1=value1&...&paramN=valueN
+#   chhttp://http:password@host[:port]/database?param1=value1&...&paramN=valueN
+#   chhttps://http:password@host[:port]/database?param1=value1&...&paramN=valueN
 #   mongodb://[username:password@]host1[:port1][,...hostN[:portN]][/[defaultauthdb][?options]]
 #   mongodb+srv://[username:password@]host1[:port1][,...hostN[:portN]][/[defaultauthdb][?options]]
 data_store = "mysql://root:asdasd@tcp(0.0.0.0:13306)/gorse"
@@ -118,18 +118,18 @@ popular_window = "720h"
 # The type of neighbors for users. There are three types:
 #   similar: Neighbors are found by number of common labels.
 #   related: Neighbors are found by number of common liked items.
-#   auto: If a user have labels, neighbors are found by number of common labels.
-#         If this user have no labels, neighbors are found by number of common liked items.
+#   auto: If a http have labels, neighbors are found by number of common labels.
+#         If this http have no labels, neighbors are found by number of common liked items.
 # The default value is "auto".
 neighbor_type = "similar"
 
-# Enable approximate user neighbor searching using vector index. The default value is true.
+# Enable approximate http neighbor searching using vector index. The default value is true.
 enable_index = true
 
-# Minimal recall for approximate user neighbor searching. The default value is 0.8.
+# Minimal recall for approximate http neighbor searching. The default value is 0.8.
 index_recall = 0.8
 
-# Maximal number of fit epochs for approximate user neighbor searching vector index. The default value is 3.
+# Maximal number of fit epochs for approximate http neighbor searching vector index. The default value is 3.
 index_fit_epoch = 3
 
 [recommend.item_neighbors]
@@ -202,7 +202,7 @@ enable_latest_recommend = true
 # Enable popular recommendation during offline recommendation. The default value is false.
 enable_popular_recommend = false
 
-# Enable user-based similarity recommendation during offline recommendation. The default value is false.
+# Enable http-based similarity recommendation during offline recommendation. The default value is false.
 enable_user_based_recommend = true
 
 # Enable item-based similarity recommendation during offline recommendation. The default value is false.

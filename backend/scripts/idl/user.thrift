@@ -134,6 +134,15 @@ struct LogoutReq {
     2: string RefreshToken (api.body="refresh_token,required") // 刷新令牌
 }
 
+struct RefreshTokenReq {
+    1: string RefreshToken (api.body="refresh_token,required") // 刷新令牌
+}
+
+struct RefreshTokenResp {
+    1: string AccessToken (api.body="access_token") // 访问令牌
+    2: string RefreshToken (api.body="refresh_token") // 刷新令牌
+}
+
 // 用户服务接口定义
 service UserAPI {
     LoginResp LoginWithUsername(1: LoginWithUsernameReq req) (api.post = "/v1/user/login/username") // 用户名登录
@@ -147,4 +156,5 @@ service UserAPI {
     FollowingListResp FollowingList(1: FollowingListReq req) (api.get = "/v1/user/following")   // 获取关注列表
     FriendListResp FriendList(1: FriendListReq req) (api.get = "/v1/user/friends")             // 获取好友列表
     UserUploadFileResp UserUploadFile(1: UserUploadFileReq req) (api.post = "/v1/auth/user/upload")   // 上传文件
+    RefreshTokenResp RefreshToken(1: RefreshTokenReq req) (api.post = "/v1/auth/user/refresh")   // 刷新令牌
 }

@@ -1,0 +1,75 @@
+syntax = "v1"
+
+
+info (
+    title:   "File API"
+    desc:    "API for file upload functionality"
+    author:  "Your Name"
+    email:   "your_email@example.com"
+    version: "1.0.0"
+)
+
+type (
+    // 多文件上传请求
+    NewMultiUploadReq {
+        FileHash         string `json:"file_hash" validate:"required,len=64"` // 文件内容的唯一哈希值
+        ChunkTotalNumber int64  `json:"chunk_total_number" validate:"required,min=1"` // 分块总数
+        FileName         string `json:"file_name" validate:"required"` // 文件名
+        FileSize         int64  `json:"file_size" validate:"required"` // 文件大小
+        FileType         int32  `json:"file_type" validate:"required,min=1"` // 文件类型
+    }
+        // 多文件上传响应
+    NewMultiUploadResp {
+
+    }
+
+    // 获取已经上传的分块请求
+    GetSuccessChunksReq {
+        FileHash string `json:"file_hash" validate:"required"` // 文件哈希值
+    }
+
+    // 获取已经上传的分块响应
+    GetSuccessChunksResp {
+        IsUpload bool   `json:"is_upload"` // 是否已经上传
+        Chunks   string `json:"chunks"` // 已经上传的分块
+    }
+
+    // 获取大文件上传请求的 URI 请求
+    GetMultiUploadUriReq {
+        FileHash string `json:"file_hash" validate:"required"` // 文件哈希值
+        ChunkID  int64  `json:"chunk_id" validate:"required"` // 分块 ID
+        ChunkSize int64  `json:"chunk_size" validate:"required"` // 分块大小
+    }
+
+    // 获取大文件上传请求的 URI 响应
+    GetMultiUploadUriResp {
+        Uri string `json:"uri"` // URI
+    }
+
+    // 完成分块上传请求
+    CompleteMultipartReq {
+        FileHash string `json:"file_hash" validate:"required"` // 文件哈希值
+    }
+
+    // 完成分块上传响应
+    CompleteMultipartResp {
+    }
+)
+
+service FileAPI {
+    @doc "上传文件"
+    @handler NewMultiUpload
+    post /v1/auth/file/multi_upload (NewMultiUploadReq) returns (NewMultiUploadResp)
+
+    @doc "获取已经上传的分块"
+    @handler GetSuccessChunks
+    post /v1/auth/file/success_chunks (GetSuccessChunksReq) returns (GetSuccessChunksResp)
+
+    @doc "获取大文件上传请求的 URI"
+    @handler GetMultiUploadUri
+    post /v1/auth/file/multi_upload_uri (GetMultiUploadUriReq) returns (GetMultiUploadUriResp)
+
+    @doc "完成分块上传"
+    @handler CompleteMultipart
+    post /v1/auth/file/complete_multipart (CompleteMultipartReq) returns (CompleteMultipartResp)
+}
