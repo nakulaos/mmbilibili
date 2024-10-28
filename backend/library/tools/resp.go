@@ -24,7 +24,7 @@ type ErrResponse struct {
 
 func SendSuccessResponse(ctx context.Context, c *app.RequestContext, code int, data interface{}) {
 	c.JSON(code, Response{
-		Code: code,
+		Code: 0,
 		Msg:  "ok",
 		Data: data,
 	})

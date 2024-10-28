@@ -1,6 +1,6 @@
 package constant
 
-const I18nRootDir = "../../common/lang"
+const I18nRootDir = "../common/lang"
 
 const (
 	ALL    = "all"

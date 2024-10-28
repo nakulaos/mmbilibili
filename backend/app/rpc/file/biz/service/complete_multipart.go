@@ -3,7 +3,6 @@ package service
 import (
 	"backend/app/common/ecode"
 	"backend/app/rpc/file/biz/global"
-	"backend/app/rpc/file/biz/model"
 	file "backend/app/rpc/file/kitex_gen/file"
 	"context"
 	"encoding/xml"
@@ -56,7 +55,7 @@ func (s *CompleteMultipartService) Run(req *file.CompleteMultipartReq) (resp *fi
 	}
 
 	// db
-	fileChunk.IsUploaded = model.FileUploaded
+	fileChunk.IsUploaded = true
 
 	if err = global.FileDal.SaveFileChunk(s.ctx, fileChunk); err != nil {
 		return nil, ecode.ServerError

@@ -33,6 +33,7 @@ func (h *GetSuccessChunksService) Run(req *file.GetSuccessChunksReq) (resp *file
 	resp = &file.GetSuccessChunksResp{
 		Chunks:   getSuccessChunksResp.Chunks,
 		IsUpload: getSuccessChunksResp.IsUpload,
+		IsRecord: getSuccessChunksResp.IsRecord,
 	}
 
 	return resp, nil

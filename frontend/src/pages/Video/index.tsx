@@ -1,10 +1,10 @@
-
+import { FileUploader } from '@/components/FileUploader/FileUploader'
 
 
 export default function Video() {
   return (
     <div>
-      <h1>Video</h1>
+      <FileUploader FileType={1} />
     </div>
   );
 }

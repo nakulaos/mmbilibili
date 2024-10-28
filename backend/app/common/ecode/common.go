@@ -25,4 +25,9 @@ var (
 		ID:    "InvalidParamsError",
 		Other: "Invalid parameters {{.Params}}",
 	})
+
+	RefreshTokenError *xerror.XError = xerror.NewXError(100004, i18n.Message{
+		ID:    "RefreshTokenError",
+		Other: "Refresh token error",
+	})
 )

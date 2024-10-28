@@ -1,13 +1,9 @@
 package initializer
 
 import (
-	"context"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	hertzlogrus "github.com/hertz-contrib/logger/logrus"
-	"go.uber.org/zap/zapcore"
-	"gopkg.in/natefinch/lumberjack.v2"
-	"time"
 )
 
 type LoggerInitializer struct {
@@ -28,21 +24,21 @@ func (l *LoggerInitializer) Init() error {
 	hlog.SetLogger(logger)
 	hlog.SetLevel(logLevel(l.logLevel))
 
-	asyncWriter := &zapcore.BufferedWriteSyncer{
-		WS: zapcore.AddSync(&lumberjack.Logger{
-			Filename:   l.logFileName,
-			MaxSize:    l.logMaxSize,
-			MaxBackups: l.logMaxBackups,
-			MaxAge:     l.logMaxAge,
-		}),
-		FlushInterval: time.Minute,
-	}
-	hlog.SetOutput(asyncWriter)
+	//asyncWriter := &zapcore.BufferedWriteSyncer{
+	//	WS: zapcore.AddSync(&lumberjack.Logger{
+	//		Filename:   l.logFileName,
+	//		MaxSize:    l.logMaxSize,
+	//		MaxBackups: l.logMaxBackups,
+	//		MaxAge:     l.logMaxAge,
+	//	}),
+	//	FlushInterval: time.Minute,
+	//}
+	//hlog.SetOutput(asyncWriter)
 
-	// 在应用关闭时同步日志
-	l.h.OnShutdown = append(l.h.OnShutdown, func(ctx context.Context) {
-		asyncWriter.Sync()
-	})
+	//// 在应用关闭时同步日志
+	//l.h.OnShutdown = append(l.h.OnShutdown, func(ctx context.Context) {
+	//	asyncWriter.Sync()
+	//})
 
 	return nil
 }

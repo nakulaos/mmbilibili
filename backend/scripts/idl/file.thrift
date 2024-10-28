@@ -17,7 +17,8 @@ struct GetSuccessChunksReq {
 
 struct GetSuccessChunksResp {
     1: bool IsUpload (api.body = "is_upload") // ;
-    2: string Chunks (api.body = "chunks") // ;
+    2: bool IsRecord (api.body = "is_record") // ;
+    3: string Chunks (api.body = "chunks") // ;
 }
 
 struct GetMultiUploadUriReq {

@@ -5,6 +5,7 @@ import (
 	"backend/app/rpc/file/biz/model"
 	"backend/library/metric"
 	"context"
+	"errors"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"gorm.io/gorm"
 )
@@ -26,8 +27,10 @@ func (f FileDalImpl) SaveFileChunk(ctx context.Context, fileChunk *model.FileChu
 func (f FileDalImpl) GetFileChunkByFileHashANDUserID(ctx context.Context, fileHash string, userID int64) (*model.FileChunk, error) {
 	fileChunk := &model.FileChunk{}
 	if err := f.db.Where("file_hash = ? AND user_id = ?", fileHash, userID).First(fileChunk).Error; err != nil {
-		metric.IncrGauge(metric.LibClient, constant.PromDBFileChunk)
-		klog.Errorf("db.where(%s,%d).first error: %v", fileHash, userID, err)
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			metric.IncrGauge(metric.LibClient, constant.PromDBFileChunk)
+			klog.Errorf("db.where(%s,%d).first error: %v", fileHash, userID, err)
+		}
 		return nil, err
 	}
 	return fileChunk, nil

@@ -11,11 +11,8 @@ import (
 	"github.com/kitex-contrib/obs-opentelemetry/provider"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	consul "github.com/kitex-contrib/registry-consul"
-	"go.uber.org/zap/zapcore"
-	"gopkg.in/natefinch/lumberjack.v2"
 	"log"
 	"net"
-	"time"
 )
 
 func main() {
@@ -52,19 +49,19 @@ func main() {
 	logger := kitexlogrus.NewLogger()
 	klog.SetLogger(logger)
 	klog.SetLevel(global.LogLevel(global.Config.Kitex.Log.LogLevel))
-	asyncWriter := &zapcore.BufferedWriteSyncer{
-		WS: zapcore.AddSync(&lumberjack.Logger{
-			Filename:   global.Config.Kitex.Log.LogFileName,
-			MaxSize:    global.Config.Kitex.Log.LogMaxSize,
-			MaxBackups: global.Config.Kitex.Log.LogMaxBackups,
-			MaxAge:     global.Config.Kitex.Log.LogMaxAge,
-		}),
-		FlushInterval: time.Minute,
-	}
-	klog.SetOutput(asyncWriter)
-	server.RegisterShutdownHook(func() {
-		asyncWriter.Sync()
-	})
+	//asyncWriter := &zapcore.BufferedWriteSyncer{
+	//	WS: zapcore.AddSync(&lumberjack.Logger{
+	//		Filename:   global.Config.Kitex.Log.LogFileName,
+	//		MaxSize:    global.Config.Kitex.Log.LogMaxSize,
+	//		MaxBackups: global.Config.Kitex.Log.LogMaxBackups,
+	//		MaxAge:     global.Config.Kitex.Log.LogMaxAge,
+	//	}),
+	//	FlushInterval: time.Minute,
+	//}
+	//klog.SetOutput(asyncWriter)
+	//server.RegisterShutdownHook(func() {
+	//	asyncWriter.Sync()
+	//})
 
 	svr := fileservice.NewServer(new(FileServiceImpl), opts...)
 

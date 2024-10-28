@@ -39,7 +39,7 @@ func (s *GetMultiUploadUriService) Run(req *file.GetMultiUploadUriReq) (resp *fi
 		chunkFileSize = req.ChunkSize
 	)
 
-	if chunkFileSize >= c.App.ChunkMaxSize {
+	if chunkFileSize >= c.App.ChunkMaxSize*1024*1024 {
 		return nil, ecode.FileChunkSizeIllegalError
 	}
 	buckname := c.MinIO.BucketName

@@ -135,7 +135,7 @@ struct LogoutReq {
 }
 
 struct RefreshTokenReq {
-    1: string RefreshToken (api.body="refresh_token,required") // 刷新令牌
+
 }
 
 struct RefreshTokenResp {

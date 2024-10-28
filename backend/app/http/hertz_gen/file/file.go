@@ -565,7 +565,9 @@ type GetSuccessChunksResp struct {
 	// ;
 	IsUpload bool `thrift:"IsUpload,1" form:"is_upload" json:"is_upload"`
 	// ;
-	Chunks string `thrift:"Chunks,2" form:"chunks" json:"chunks"`
+	IsRecord bool `thrift:"IsRecord,2" form:"is_record" json:"is_record"`
+	// ;
+	Chunks string `thrift:"Chunks,3" form:"chunks" json:"chunks"`
 }
 
 func NewGetSuccessChunksResp() *GetSuccessChunksResp {
@@ -579,13 +581,18 @@ func (p *GetSuccessChunksResp) GetIsUpload() (v bool) {
 	return p.IsUpload
 }
 
+func (p *GetSuccessChunksResp) GetIsRecord() (v bool) {
+	return p.IsRecord
+}
+
 func (p *GetSuccessChunksResp) GetChunks() (v string) {
 	return p.Chunks
 }
 
 var fieldIDToName_GetSuccessChunksResp = map[int16]string{
 	1: "IsUpload",
-	2: "Chunks",
+	2: "IsRecord",
+	3: "Chunks",
 }
 
 func (p *GetSuccessChunksResp) Read(iprot thrift.TProtocol) (err error) {
@@ -616,8 +623,16 @@ func (p *GetSuccessChunksResp) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 2:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.BOOL {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 3:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -665,6 +680,17 @@ func (p *GetSuccessChunksResp) ReadField1(iprot thrift.TProtocol) error {
 }
 func (p *GetSuccessChunksResp) ReadField2(iprot thrift.TProtocol) error {
 
+	var _field bool
+	if v, err := iprot.ReadBool(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.IsRecord = _field
+	return nil
+}
+func (p *GetSuccessChunksResp) ReadField3(iprot thrift.TProtocol) error {
+
 	var _field string
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -687,6 +713,10 @@ func (p *GetSuccessChunksResp) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 	}
@@ -725,10 +755,10 @@ WriteFieldEndError:
 }
 
 func (p *GetSuccessChunksResp) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("Chunks", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("IsRecord", thrift.BOOL, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Chunks); err != nil {
+	if err := oprot.WriteBool(p.IsRecord); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -739,6 +769,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *GetSuccessChunksResp) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("Chunks", thrift.STRING, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Chunks); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
 func (p *GetSuccessChunksResp) String() string {

@@ -206,6 +206,11 @@
           "format": "boolean",
           "description": " 是否已经上传"
         },
+        "is_record": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否已经记录在数据库"
+        },
         "chunks": {
           "type": "string",
           "description": " 已经上传的分块"
@@ -214,6 +219,7 @@
       "title": "GetSuccessChunksResp",
       "required": [
         "is_upload",
+        "is_record",
         "chunks"
       ]
     },

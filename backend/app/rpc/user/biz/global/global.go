@@ -22,7 +22,7 @@ func MustInitGlobalVal() {
 		c.Redis.MaxActiveCoons,
 		c.Redis.MinIdleCoons)
 	cache := initializer.InitJETCache(c.UserCache, redisClient)
-	db := initializer.InitGormDBFromMysql(c.Mysql.DSN)
+	db := initializer.InitGormDBFromMysql(c.Mysql)
 	UserDal = dal.NewUserDalImpl(cache, db, redisClient)
 	Config = c
 }

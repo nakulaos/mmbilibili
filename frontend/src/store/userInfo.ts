@@ -20,7 +20,8 @@ interface UserInfo {
   phone: string;
   email: string;
   status: number;
-  token?: string;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 const initialState: UserInfo = {
@@ -42,7 +43,8 @@ const initialState: UserInfo = {
   phone: '',
   email: '',
   status: 0,
-  token: '',
+  accessToken: '',
+  refreshToken: '',
 };
 
 const userInfoSlice = createSlice({
@@ -59,14 +61,18 @@ const userInfoSlice = createSlice({
     clearUserInfo(state) {
       return initialState;
     },
-    setToken(state, action: PayloadAction<string>) {
-      state.token = action.payload;
+    setAccessToken(state, action: PayloadAction<string>) {
+      state.accessToken = action.payload;
     },
     clearToken(state) {
-      state.token = '';
+      state.accessToken = '';
+      state.refreshToken = '';
     },
+    setRefreshToken(state, action: PayloadAction<string>) {
+        state.refreshToken = action.payload;
+    }
   },
 });
 
-export const { setUserInfo, clearUserInfo,clearToken,setToken } = userInfoSlice.actions;
+export const { setUserInfo, clearUserInfo,clearToken,setAccessToken,setRefreshToken } = userInfoSlice.actions;
 export default userInfoSlice.reducer;

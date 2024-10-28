@@ -31,6 +31,7 @@ type (
     // 获取已经上传的分块响应
     GetSuccessChunksResp {
         IsUpload bool   `json:"is_upload"` // 是否已经上传
+        IsRecord bool   `json:"is_record"` // 是否已经记录在数据库
         Chunks   string `json:"chunks"` // 已经上传的分块
     }
 

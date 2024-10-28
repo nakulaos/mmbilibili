@@ -1,26 +1,25 @@
-import { AlipayCircleOutlined, LockOutlined, TaobaoCircleOutlined, UserOutlined, WeiboCircleOutlined } from "@ant-design/icons"
-import { LoginForm, ProFormCheckbox, ProFormInstance, ProFormText } from '@ant-design/pro-components'
-import { Flex, Space, Tabs, theme, Typography } from 'antd'
-import { useRef, useState } from 'react'
+import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from "@ant-design/icons";
+import { LoginForm, ProFormCheckbox, ProFormInstance } from '@ant-design/pro-components';
+import { Flex, Tabs, Typography } from 'antd';
+import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
     AutomaticLoginKey,
-    LoginByEmailKey, LoginByOtherKey,
+    LoginByEmailKey,
+    LoginByOtherKey,
     LoginByPhoneKey,
     LoginByUsernameKey
-} from '@/locales/locale'
-
-import { LoginModelByUsername } from '@/components/LoginModel/LoginModelByUsername'
+} from '@/locales/locale';
+import { LoginModelByUsername } from '@/components/LoginModel/LoginModelByUsername';
 
 type LoginType = 'phone' | 'username' | 'email';
-
-
 
 export const LoginModel: React.FC = () => {
     const [loginType, setLoginType] = useState<LoginType>('username');
 
     const usernameLoginRef = useRef<{ login: (values: any) => void } | null>(null);
     const formRef = useRef<ProFormInstance>();
+
     const handleReset = () => {
         formRef.current?.resetFields();
     }
@@ -32,7 +31,6 @@ export const LoginModel: React.FC = () => {
         }
     };
 
-
     const loginMap = [
         {
             type: 'username',
@@ -41,12 +39,32 @@ export const LoginModel: React.FC = () => {
         {
             type: 'phone',
             component: <></>
+        },
+        {
+            type: 'email',
+            component: <></>
         }
-    ]
-    const intl = useIntl()
+    ];
 
+    const intl = useIntl();
 
-    return(
+    // Prepare the items for Tabs
+    const tabItems = [
+        {
+            key: 'username',
+            label: intl.formatMessage({ id: LoginByUsernameKey }),
+        },
+        {
+            key: 'phone',
+            label: intl.formatMessage({ id: LoginByPhoneKey }),
+        },
+        {
+            key: 'email',
+            label: intl.formatMessage({ id: LoginByEmailKey }),
+        },
+    ];
+
+    return (
         <>
             <LoginForm
                 title="mmbilibili"
@@ -69,36 +87,28 @@ export const LoginModel: React.FC = () => {
                 <Tabs
                     centered
                     activeKey={loginType}
+                    items={tabItems}
                     onChange={(activeKey) => setLoginType(activeKey as LoginType)}
-                >
-                    <Tabs.TabPane key={'username'} tab={intl.formatMessage({ id: LoginByUsernameKey })} />
-                    <Tabs.TabPane key={'phone'} tab={intl.formatMessage({ id: LoginByPhoneKey })} />
-                    <Tabs.TabPane key={'email'} tab={intl.formatMessage({ id: LoginByEmailKey })} />
-                </Tabs>
+                />
                 {
                     loginMap.map((item) => {
                         if (item.type === loginType) {
-                            return item.component
+                            return (
+                                <div key={item.type}>{item.component}</div> // Add a unique key prop here
+                            );
                         }
+                        return null; // Ensure that you return null if the condition is not met
                     })
                 }
-                <div
-                    style={{
-                        marginBlockEnd: 24,
-                    }}
-                >
+                <div style={{ marginBlockEnd: 24 }}>
                     <ProFormCheckbox noStyle name="autoLogin">
                         {intl.formatMessage({ id: AutomaticLoginKey })}
                     </ProFormCheckbox>
-                    <a
-                        style={{
-                            float: 'right',
-                        }}
-                    >
+                    <a style={{ float: 'right' }}>
                         忘记密码
                     </a>
                 </div>
             </LoginForm>
         </>
-    )
+    );
 }

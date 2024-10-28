@@ -43,8 +43,9 @@ message GetSuccessChunksReq {
 }
 
 message GetSuccessChunksResp {
-  bool IsUpload = 1;
-  string Chunks = 2;
+  bool IsUpload = 1; // 是否文件完整存在minio
+  bool IsRecord = 2; // 是否已经记录在数据库
+  string Chunks = 3;
 }
 
 service FileService {
