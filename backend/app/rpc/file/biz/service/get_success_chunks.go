@@ -3,10 +3,11 @@ package service
 import (
 	"backend/app/common/ecode"
 	"backend/app/rpc/file/biz/global"
-	"backend/app/rpc/file/biz/model"
 	file "backend/app/rpc/file/kitex_gen/file"
 	"context"
+	"errors"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"gorm.io/gorm"
 	"strconv"
 )
 
@@ -21,7 +22,7 @@ func NewGetSuccessChunksService(ctx context.Context) *GetSuccessChunksService {
 func (s *GetSuccessChunksService) Run(req *file.GetSuccessChunksReq) (resp *file.GetSuccessChunksResp, err error) {
 	var (
 		uploadID, chunks string
-		uploaded         = 0
+		uploaded         bool
 		fileHash         = req.FileHash
 		uid              = req.UserID
 		c                = global.Config
@@ -29,6 +30,11 @@ func (s *GetSuccessChunksService) Run(req *file.GetSuccessChunksReq) (resp *file
 
 	fileChunk, err := global.FileDal.GetFileChunkByFileHashANDUserID(s.ctx, fileHash, uid)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return &file.GetSuccessChunksResp{
+				IsRecord: false,
+			}, nil
+		}
 		return nil, ecode.ServerError
 	}
 
@@ -37,22 +43,24 @@ func (s *GetSuccessChunksService) Run(req *file.GetSuccessChunksReq) (resp *file
 	bucketName := c.MinIO.BucketName
 	objectName := fileChunk.ObjectName
 
-	if fileChunk.IsUploaded == model.FileUploaded {
+	if fileChunk.IsUploaded {
 		resp = &file.GetSuccessChunksResp{
-			IsUpload: uploaded == model.FileUploaded,
+			IsUpload: true,
+			IsRecord: true,
 		}
 		return resp, nil
 	}
 
-	isExist, err := isObjectExist(bucketName, objectName)
+	uploaded, err = isObjectExist(bucketName, objectName) // 判断文件是否已经上传
 	if err != nil {
 		klog.Errorf("getSuccessChunksService.isObjectExist(%s,%s) error: %v", bucketName, objectName, err)
 		return nil, ecode.ServerError
 	}
 
-	if isExist {
+	if uploaded {
 		return &file.GetSuccessChunksResp{
-			IsUpload: isExist,
+			IsUpload: true,
+			IsRecord: true,
 		}, nil
 	}
 
@@ -67,7 +75,8 @@ func (s *GetSuccessChunksService) Run(req *file.GetSuccessChunksReq) (resp *file
 	}
 
 	resp = &file.GetSuccessChunksResp{
-		IsUpload: uploaded == model.FileUploaded,
+		IsUpload: false,
+		IsRecord: true,
 		Chunks:   chunks,
 	}
 

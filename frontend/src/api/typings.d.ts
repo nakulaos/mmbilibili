@@ -1,44 +1,113 @@
 declare namespace API {
+    type CompleteMultipartReq = {
+        /**  文件哈希值 */
+        file_hash: string
+    }
+
+    type CompleteMultipartResp = {}
+
     type EndLiveReq = {
         live_id: number
     }
 
+    type FollowerListParams = {
+        /**  页码 */
+        page: number
+        /**  每页大小 */
+        page_size: number
+    }
+
     type FollowerListReq = {
-        page?: number
-        page_size?: number
-        total?: number
+        /**  页码 */
+        page: number
+        /**  每页大小 */
+        page_size: number
     }
 
     type FollowerListResp = {
+        /**  粉丝总数 */
         total: number
+        /**  粉丝列表 */
         list: User[]
     }
 
+    type FollowingListParams = {
+        /**  页码 */
+        page: number
+        /**  每页大小 */
+        page_size: number
+    }
+
     type FollowingListReq = {
-        page?: number
-        page_size?: number
-        total?: number
+        /**  页码 */
+        page: number
+        /**  每页大小 */
+        page_size: number
     }
 
     type FollowingListResp = {
+        /**  关注总数 */
         total: number
+        /**  关注列表 */
         list: User[]
     }
 
     type FollowUserReq = {
+        /**  用户ID */
         user_id: number
+        /**  操作，1: 关注, 2: 取消关注 */
         action: number
     }
 
+    type FollowUserResp = {}
+
+    type FriendListParams = {
+        /**  页码 */
+        page: number
+        /**  每页大小 */
+        page_size: number
+    }
+
     type FriendListReq = {
-        page?: number
-        page_size?: number
-        total?: number
+        /**  页码 */
+        page: number
+        /**  每页大小 */
+        page_size: number
     }
 
     type FriendListResp = {
+        /**  好友总数 */
         total: number
+        /**  好友列表 */
         list: User[]
+    }
+
+    type GetMultiUploadUriReq = {
+        /**  文件哈希值 */
+        file_hash: string
+        /**  分块 ID */
+        chunk_id: number
+        /**  分块大小 */
+        chunk_size: number
+    }
+
+    type GetMultiUploadUriResp = {
+        /**  URI */
+        uri: string
+    }
+
+    type GetSuccessChunksReq = {
+        /**  文件哈希值 */
+        file_hash: string
+    }
+
+    type GetSuccessChunksResp = {
+        /**  是否已经上传 */
+        is_upload: boolean
+        /**  是否已经记录在数据库 */
+        is_record: boolean
+        /**  已经上传的分块 */
+        chunks: string
     }
 
     type LiveComment = {
@@ -138,30 +207,113 @@ declare namespace API {
     }
 
     type LoginResp = {
-        accessToken: string
+        /**  访问令牌 */
+        access_token: string
+        /**  刷新令牌 */
+        refresh_token: string
+        /**  用户ID */
         user_id: number
-        userinfo: User
+        user_info: User
     }
 
     type LoginWithEmailReq = {
+        /**  邮箱 */
         email: string
+        /**  密码 */
         password: string
     }
 
     type LoginWithPhoneReq = {
+        /**  手机号 */
         phone: string
+        /**  密码 */
         password: string
     }
 
     type LoginWithUsernameReq = {
+        /**  用户名 */
         username: string
+        /**  密码 */
         password: string
     }
 
-    type LogoutReq = {}
+    type LogoutReq = {
+        /**  访问令牌 */
+        access_token: string
+        /**  刷新令牌 */
+        refresh_token: string
+    }
+
+    type LogoutResp = {}
+
+    type NewMultiUploadReq = {
+        /**  文件内容的唯一哈希值 */
+        file_hash: string
+        /**  分块总数 */
+        chunk_total_number: number
+        /**  文件名 */
+        file_name: string
+        /**  文件大小 */
+        file_size: number
+        /**  文件类型 */
+        file_type: number
+    }
+
+    type NewMultiUploadResp = {}
+
+    type OnPublicStreamReq = {
+        /**  流应用名 */
+        app: string
+        /**  TCP 链接唯一 ID */
+        id: string
+        /**  推流器 IP */
+        ip: string
+        /**  推流 URL 参数 */
+        params: string
+        /**  推流器端口号 */
+        port: number
+        /**  推流协议, 可能是 rtsp、rtmp */
+        schema: string
+        /**  流 ID */
+        stream: string
+        /**  流虚拟主机 */
+        vhost: string
+        /**  服务器 ID, 通过配置文件设置 */
+        mediaServerId: string
+    }
+
+    type OnPublicStreamResp = {}
+
+    type OnStreamChangeReq = {
+        /**  流应用名 */
+        app: string
+        /**  流注册或注销 */
+        regist: boolean
+        /**  rtsp 或 rtmp */
+        schema: string
+        /**  流 ID */
+        stream: string
+        /**  流虚拟主机 */
+        vhost: string
+        /**  服务器 ID, 通过配置文件设置 */
+        mediaServerId: string
+    }
+
+    type OnStreamChangeResp = {}
+
+    type RefreshTokenReq = {}
+
+    type RefreshTokenResp = {
+        /**  访问令牌 */
+        access_token: string
+        /**  刷新令牌 */
+        refresh_token: string
+    }
 
     type RegisterReq = {
+        /**  用户名 */
         username: string
+        /**  密码 */
         password: string
     }
 
@@ -175,37 +327,65 @@ declare namespace API {
     }
 
     type UpdateUserInfoReq = {
-        nickname?: string
-        avatar?: string
-        gender?: number
-        role?: number
-        phone?: string
-        email?: string
+        /**  昵称 */
+        nickname: string
+        /**  头像URL */
+        avatar: string
+        /**  性别 */
+        gender: number
+        /**  角色 */
+        role: number
+        /**  手机号 */
+        phone: string
+        /**  邮箱 */
+        email: string
     }
 
     type UpdateUserInfoResp = {
-        userinfo: User
+        user_info: User
     }
 
     type User = {
+        /**  用户ID */
         id: number
+        /**  用户名 */
         username: string
+        /**  昵称 */
         nickname: string
+        /**  头像URL */
         avatar: string
+        /**  性别，0: 未知, 1: 男, 2: 女 */
         gender: number
+        /**  用户角色，0: 普通用户, 1: 管理员 */
         role: number
+        /**  粉丝数量 */
         follower_count: number
+        /**  关注数量 */
         following_count: number
+        /**  点赞数 */
         like_count: number
+        /**  收藏数 */
         star_count: number
+        /**  自己的收藏数 */
         self_star_count: number
+        /**  自己的点赞数 */
         self_like_count: number
+        /**  直播次数 */
         live_count: number
+        /**  作品数量 */
         work_count: number
+        /**  好友数量 */
         friend_count: number
+        /**  手机号 */
         phone: string
+        /**  邮箱 */
         email: string
+        /**  用户状态 */
         status: number
+    }
+
+    type UserUploadFileReq = {
+        kind: string
     }
 
     type UserUploadFileResp = {

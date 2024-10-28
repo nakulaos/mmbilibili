@@ -62,6 +62,9 @@ func JWTMiddleware() app.HandlerFunc {
 		ctx.Set("claims", claims)
 		ctx.Set("uid", claims.UserID)
 		ctx.Set("username", claims.Username)
+		if kind == "refresh" {
+			ctx.Set("refresh_token", token)
+		}
 
 	}
 }

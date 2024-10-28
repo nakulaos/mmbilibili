@@ -106,3 +106,10 @@ export const HotKey = "hot";
 export const RecommendKey = "recommend";
 export const neighborKey = "neighbor";
 
+
+// 文件
+export const UploadKey = "Upload";
+export const DownloadKey = "Download";
+export const FileKey = "File";
+export const TheFileIsUploadKey = "TheFileIsUpload";
+export const TheFileContinueUploadKey = "TheFileContinueUpload";

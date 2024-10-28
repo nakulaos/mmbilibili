@@ -13,6 +13,7 @@ import (
 	"github.com/hertz-contrib/logger/accesslog"
 	"github.com/hertz-contrib/pprof"
 	"golang.org/x/text/language"
+	"time"
 )
 
 type MiddlewareInitializer struct {
@@ -24,9 +25,15 @@ func NewMiddlewareInitializer(h *server.Hertz) *MiddlewareInitializer {
 }
 
 func (m *MiddlewareInitializer) Init() error {
-	m.h.Use(recovery.Recovery())                // recovery
-	pprof.Register(m.h)                         // pprof
-	m.h.Use(cors.Default())                     // cors
+	m.h.Use(recovery.Recovery()) // recovery
+	pprof.Register(m.h)          // pprof
+	m.h.Use(cors.New(cors.Config{
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization", "Kind", "Accept-Language"},
+		AllowCredentials: false,
+		AllowAllOrigins:  true,
+		MaxAge:           12 * time.Hour,
+	}))
 	m.h.Use(gzip.Gzip(gzip.DefaultCompression)) // gzip
 	m.h.Use(accesslog.New())                    // access log
 	m.h.Use(hertzI18n.Localize(hertzI18n.WithBundle(&hertzI18n.BundleCfg{

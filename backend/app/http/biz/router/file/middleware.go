@@ -3,6 +3,7 @@
 package file
 
 import (
+	"backend/app/http/biz/mw"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -18,7 +19,9 @@ func _v1Mw() []app.HandlerFunc {
 
 func _authMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	apphandleFunc := make([]app.HandlerFunc, 0)
+	apphandleFunc = append(apphandleFunc, mw.JWTMiddleware())
+	return apphandleFunc
 }
 
 func _fileMw() []app.HandlerFunc {

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
-    AuthorizationErrorKey,
     CustomAvatarContentAfterLoginYouCanKey,
     CustomAvatarContentMultiTerminalSynchronousPlaybackRecordKey,
     customAvatarContentNoAccountKey,
@@ -12,7 +11,6 @@ import {
     followingsKey,
     loginKey,
     logoutKey,
-    OkKey,
     personalCenterKey,
     recommendationServiceKey,
     registerKey,
@@ -33,8 +31,9 @@ import {
 import { LoginModel } from '@/components/LoginModel/LoginModel'
 import { useDispatch, useSelector } from 'react-redux'
 import { StatisticCard } from '@ant-design/pro-components'
-import { logout } from '@/api/follow'
 import { clearToken, clearUserInfo } from '@/store/userInfo'
+import { logout } from '@/api/userApi'
+import { ItemType } from 'antd/es/menu/interface'
 
 const { Title } = Typography
 
@@ -44,23 +43,48 @@ export const CustomAvatarContent: React.FC = () => {
     const userInfo = useSelector((state: any) => state.userInfo)
     const [current, setCurrent] = useState('') // 默认选中的菜单项
     const dispatch = useDispatch()
-    const handleClick = async (e: any) => {
-        console.log('Clicked menu item:', e.key) // 获取被点击的菜单项的 key
-        if (e.key === logoutKey) {
+    const handleClick = async (key:string) => {
+        console.log('Clicked menu item:', key) // 获取被点击的菜单项的 key
+        if (key === logoutKey) {
             // 退出登录
-            await logout({}).then((res) => {
+            await logout({
+                access_token: userInfo.accessToken,
+                refresh_token: userInfo.refreshToken
+            }).then((res) => {
                 dispatch(clearUserInfo())
                 dispatch(clearToken())
-                message.success(intl.formatMessage({ id: OkKey }))
             },(error)=>{
                 dispatch(clearUserInfo())
                 dispatch(clearToken())
-                message.error(intl.formatMessage({id:AuthorizationErrorKey}))
             })
         }
     }
+    const menuItems:ItemType[] = [
+        {
+            key: personalCenterKey,
+            icon: <UserOutlined />,
+            label: intl.formatMessage({ id: personalCenterKey }),
+        },
+        {
+            key: submissionManagementKey,
+            icon: <NodeIndexOutlined />,
+            label: intl.formatMessage({ id: submissionManagementKey }),
 
+        },
+        {
+            key: recommendationServiceKey,
+            icon: <FireOutlined />,
+            label: intl.formatMessage({ id: recommendationServiceKey }),
+        },
+        { type: 'divider' },
+        {
+            key: logoutKey,
+            icon: <SelectOutlined />,
+            label: intl.formatMessage({ id: logoutKey }),
+        }
+    ]
     const [visibilityForLoginModal, setVisibilityForLoginModal] = useState(false)
+    // @ts-ignore
     return (
         <div>
             {userInfo.id ? (
@@ -96,8 +120,9 @@ export const CustomAvatarContent: React.FC = () => {
                         </Row>
                         <StatisticCard.Group>
                             <StatisticCard
+                                key={followingsKey}
                                 onClick={() => {
-                                    handleClick({ key: followingsKey })
+                                    handleClick( followingsKey )
                                 }}
                                 statistic={{
                                     title: intl.formatMessage({ id: followingsKey }),
@@ -105,8 +130,9 @@ export const CustomAvatarContent: React.FC = () => {
                                 }}
                             />
                             <StatisticCard
+                                key={followersKey}
                                 onClick={() => {
-                                    handleClick({ key: followersKey })
+                                    handleClick( followersKey )
                                 }}
                                 statistic={{
                                     title: intl.formatMessage({ id: followersKey }),
@@ -114,8 +140,9 @@ export const CustomAvatarContent: React.FC = () => {
                                 }}
                             />
                             <StatisticCard
+                                key={worksKey}
                                 onClick={() => {
-                                    handleClick({ key: worksKey })
+                                    handleClick(worksKey )
                                 }}
                                 statistic={{
                                     title: intl.formatMessage({ id: worksKey }),
@@ -123,21 +150,11 @@ export const CustomAvatarContent: React.FC = () => {
                                 }}
                             />
                         </StatisticCard.Group>
-                        <Menu onClick={handleClick} selectedKeys={[current]}>
-                            <Menu.Item key={personalCenterKey} icon={<UserOutlined />}>
-                                {intl.formatMessage({ id: personalCenterKey })}
-                            </Menu.Item>
-                            <Menu.Item key={submissionManagementKey} icon={<NodeIndexOutlined />}>
-                                {intl.formatMessage({ id: submissionManagementKey })}
-                            </Menu.Item>
-                            <Menu.Item key={recommendationServiceKey} icon={<FireOutlined />}>
-                                {intl.formatMessage({ id: recommendationServiceKey })}
-                            </Menu.Item>
-                            <Divider />
-                            <Menu.Item key={logoutKey} icon={<SelectOutlined />}>
-                                {intl.formatMessage({ id: logoutKey })}
-                            </Menu.Item>
-                        </Menu>
+                        <Menu
+                            onClick={({ key }) => handleClick(key)}
+                            selectedKeys={[current]}
+                            items={menuItems}
+                        />
                     </Flex>
 
                 </>

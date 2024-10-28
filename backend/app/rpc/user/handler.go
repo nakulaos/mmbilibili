@@ -85,3 +85,10 @@ func (s *UserRpcServiceImpl) UserUploadFile(ctx context.Context, req *user.UserU
 
 	return resp, err
 }
+
+// RefreshToken implements the UserRpcServiceImpl interface.
+func (s *UserRpcServiceImpl) RefreshToken(ctx context.Context, req *user.RefreshTokenReq) (resp *user.RefreshTokenResp, err error) {
+	resp, err = service.NewRefreshTokenService(ctx).Run(req)
+
+	return resp, err
+}

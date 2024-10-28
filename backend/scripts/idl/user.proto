@@ -153,6 +153,16 @@ message UserUploadFileResp {
   string cover_url = 2; // 封面URL
 }
 
+message RefreshTokenReq {
+  string refresh_token = 1; // 刷新令牌
+  int64 user_id = 2; // 用户ID
+}
+
+message RefreshTokenResp {
+  string access_token = 1; // 访问令牌
+  string refresh_token = 2; // 刷新令牌
+}
+
 // 服务定义
 service UserRpcService {
   rpc LoginWithUsername(LoginWithUsernameReq) returns (LoginResp);
@@ -166,4 +176,5 @@ service UserRpcService {
   rpc FollowingList(FollowingListReq) returns (FollowingListResp);
   rpc FriendList(FriendListReq) returns (FriendListResp);
   rpc UserUploadFile(UserUploadFileReq) returns (UserUploadFileResp);
+  rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenResp);
 }

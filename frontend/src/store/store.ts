@@ -7,6 +7,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 
 import globalReducer from './global';
 import userInfoReducer from './userInfo';
+import { thunk } from 'redux-thunk'
 
 
 const persistConfig = {
@@ -27,13 +28,13 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
-//   middleware: (getDefaultMiddleware) =>
-//     getDefaultMiddleware({
-//       serializableCheck: {
-//         // Redux Persist 会使用一些非序列化的值，需要忽略警告
-//         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
-//       },
-//     }).concat(thunk),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Redux Persist 会使用一些非序列化的值，需要忽略警告
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+      },
+    }).concat(thunk),
 });
 
 // 创建 persistor

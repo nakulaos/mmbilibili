@@ -3,16 +3,17 @@ import { useIntl } from 'react-intl'
 import { ProFormText } from '@ant-design/pro-components'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import {
-    LoginByUsernameKey, OkKey,
+     OkKey,
     PasswordPlaceholderKey,
     UsernamePlaceholderKey
 } from '@/locales/locale'
 import { validatePassword, validateUsername } from '@/components/LoginModel/ValidationRules'
 import { forwardRef, useImperativeHandle } from 'react'
-import { loginWithUsername } from '@/api/common'
+
 import { useDispatch, useSelector } from 'react-redux'
+
+import { loginWithUsername } from '@/api/userApi'
 import { setUserInfo } from '@/store/userInfo'
-import { Await } from 'react-router-dom'
 
 interface LoginModelByUsernameProps {
     onFinish: (values: any) => void;  // 表单提交的处理函数
@@ -25,31 +26,33 @@ export const LoginModelByUsername = forwardRef((props: LoginModelByUsernameProps
 
     const login =  async (values: any) => {
         await loginWithUsername(values).then((res) => {
-            const updatedUserInfo = {
-                id: res.data.userinfo.id,
-                token: res.data.accessToken,
+            const userInfo = {
+                id: res.data.user_info.id,
+                accessToken: res.data.access_token,
+                refreshToken: res.data.refresh_token,
                 username: values.username,
-                avatar: res.data.userinfo.avatar,
-                nickname: res.data.userinfo.nickname,
-                email: res.data.userinfo.email,
-                phone: res.data.userinfo.phone,
-                followerCount: res.data.userinfo.follower_count,
-                followingCount: res.data.userinfo.following_count,
-                likeCount: res.data.userinfo.like_count,
-                starCount: res.data.userinfo.star_count,
-                selfStarCount: res.data.userinfo.self_star_count,
-                selfLikeCount: res.data.userinfo.self_like_count,
-                liveCount: res.data.userinfo.live_count,
-                workCount: res.data.userinfo.work_count,
-                friendCount: res.data.userinfo.friend_count,
-                status: res.data.userinfo.status,
-                gender: res.data.userinfo.gender,
-                role: res.data.userinfo.role,
+                avatar: res.data.user_info.avatar,
+                nickname: res.data.user_info.nickname,
+                email: res.data.user_info.email,
+                phone: res.data.user_info.phone,
+                followerCount: res.data.user_info.follower_count,
+                followingCount: res.data.user_info.following_count,
+                likeCount: res.data.user_info.like_count,
+                starCount: res.data.user_info.star_count,
+                selfStarCount: res.data.user_info.self_star_count,
+                selfLikeCount: res.data.user_info.self_like_count,
+                liveCount: res.data.user_info.live_count,
+                workCount: res.data.user_info.work_count,
+                friendCount: res.data.user_info.friend_count,
+                status: res.data.user_info.status,
+                gender: res.data.user_info.gender,
+                role: res.data.user_info.role,
             };
 
-            dispatch(setUserInfo(updatedUserInfo));
-            message.success(intl.formatMessage({ id: OkKey }));
+            dispatch(setUserInfo(userInfo));
             props.onReset();
+        }).catch((error) => {
+          console.log(error)
         })
     };
 

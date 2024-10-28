@@ -22,6 +22,7 @@ type Client interface {
 	FollowingList(ctx context.Context, Req *user.FollowingListReq, callOptions ...callopt.Option) (r *user.FollowingListResp, err error)
 	FriendList(ctx context.Context, Req *user.FriendListReq, callOptions ...callopt.Option) (r *user.FriendListResp, err error)
 	UserUploadFile(ctx context.Context, Req *user.UserUploadFileReq, callOptions ...callopt.Option) (r *user.UserUploadFileResp, err error)
+	RefreshToken(ctx context.Context, Req *user.RefreshTokenReq, callOptions ...callopt.Option) (r *user.RefreshTokenResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -106,4 +107,9 @@ func (p *kUserRpcServiceClient) FriendList(ctx context.Context, Req *user.Friend
 func (p *kUserRpcServiceClient) UserUploadFile(ctx context.Context, Req *user.UserUploadFileReq, callOptions ...callopt.Option) (r *user.UserUploadFileResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.UserUploadFile(ctx, Req)
+}
+
+func (p *kUserRpcServiceClient) RefreshToken(ctx context.Context, Req *user.RefreshTokenReq, callOptions ...callopt.Option) (r *user.RefreshTokenResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.RefreshToken(ctx, Req)
 }
