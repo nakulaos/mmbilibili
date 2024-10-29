@@ -31,7 +31,7 @@ func VerifyToken(tokenString, secret string) (*Claims, error) {
 
 	if err != nil {
 		if err == jwt.ErrTokenExpired {
-			return nil, fmt.Errorf("token expired: %v", err)
+			return nil, err
 		}
 		return nil, err
 	}

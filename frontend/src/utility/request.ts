@@ -1,18 +1,22 @@
 import axios from 'axios';
 import { store } from '@/store/store';
-import { clearToken, clearUserInfo, setAccessToken, setRefreshToken } from '@/store/userInfo'
+import { clearAccessToken, clearToken, clearUserInfo, setAccessToken, setRefreshToken } from '@/store/userInfo'
 import { message } from 'antd';
 import { getIntl } from '@/locales';
 import { AuthorizationErrorKey, ServerErrorKey } from '@/locales/locale';
-import { refreshToken as refreshTokenApi  } from '@/api/userApi';
+import { refreshToken, refreshToken as refreshTokenApi } from '@/api/userApi'
+import { addRequest, RefreshTokenAtUtility } from '@/utility/refresh'
 
 // 创建 Axios 实例
 const DEV_BASE_URL = "http://192.168.56.1:18081";
 const PROD_BASE_URL = "http://xx.xx.xx.xx";
+export const uri = DEV_BASE_URL
 const myAxios = axios.create({
-    baseURL: DEV_BASE_URL,
+    baseURL: uri,
     timeout: 10000,
 });
+
+RefreshTokenAtUtility();
 
 // 请求拦截器：添加访问令牌
 myAxios.interceptors.request.use(
@@ -32,62 +36,39 @@ myAxios.interceptors.request.use(
 // 响应拦截器：处理错误和自动刷新令牌
 myAxios.interceptors.response.use(
     function (response) {
-        const { data } = response;
+        const {config, data } = response;
         const intl = getIntl();
-
-        if (data.code !== 0) {
-            if (data.code === 100001) {
-                store.dispatch(clearUserInfo());
-                store.dispatch(clearToken());
-                message.warning(intl.formatMessage({ id: AuthorizationErrorKey }));
-
-            } else {
-                message.error(data.msg || intl.formatMessage({ id: ServerErrorKey }));
+        console.info(data);
+        return new Promise((resolve, reject) => {
+            if (data.code !== 0) {
+                if (data.code === 100001) {
+                    // token 失效
+                    store.dispatch(clearAccessToken());
+                    addRequest(() => resolve(myAxios(config)))
+                    RefreshTokenAtUtility();
+                } else {
+                    throw new Error(data.msg || intl.formatMessage({ id: ServerErrorKey }));
+                }
             }
-            return Promise.reject(data?.data || {});
-        }
 
-        message.success(data.msg);
-        return data;
+            return resolve(data);
+        })
+
+
     },
     async function (error) {
-        const originalRequest = error.config;
         const intl = getIntl();
-
-        if ((error.response?.status === 401) && !originalRequest._retry) {
-            originalRequest._retry = true;
-            const state = store.getState();
-
-            try {
-                const state = store.getState();
-                const refreshToken = state.userInfo.refreshToken;
-                const refreshResponse = await refreshTokenApi({
-
-                },{
-                    headers: {
-                        "Authorization": refreshToken,
-                        "Kind": "refresh",
-                    }
-                });
-                const { access_token,refresh_token } = refreshResponse.data;
-
-                // 更新store中的访问令牌
-                store.dispatch(setAccessToken(access_token));
-                store.dispatch(setRefreshToken(refresh_token));
-
-
-                originalRequest.headers.Authorization = access_token;
-                return myAxios(originalRequest);
-            } catch (refreshError) {
-                store.dispatch(clearUserInfo());
-                store.dispatch(clearToken());
-                message.warning(intl.formatMessage({ id: AuthorizationErrorKey }));
-                return Promise.reject(refreshError);
+        if (error.response) {
+            const { status, data } = error.response;
+            if (status === 401) {
+                addRequest(() => myAxios(error.config))
+                RefreshTokenAtUtility();
+            } else {
+                throw new Error(data.msg || intl.formatMessage({ id: ServerErrorKey }));
             }
+        } else {
+            throw new Error(intl.formatMessage({ id: ServerErrorKey }));
         }
-
-        message.error("network error");
-        return Promise.reject(error);
     }
 );
 

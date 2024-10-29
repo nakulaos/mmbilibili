@@ -40,8 +40,8 @@ redis:
 
 app:
   salt: "asdasd"
-  access_token_expire: 30
-  refresh_token_expire: 360 #min
+  access_token_expire: 360
+  refresh_token_expire: 10080 #min
   access_token_secret: asdasd
   refresh_token_secret: asdasdasdasd
 
