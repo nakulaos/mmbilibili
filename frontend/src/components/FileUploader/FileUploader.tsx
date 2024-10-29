@@ -13,7 +13,7 @@ type FileUploaderProps = {
     FileType : number,
 }
 
-// TODO 暂停上传功能，文件进度条，上传速度，上传失败重试，上传成功提示
+
 export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [uploading, setUploading] = useState(false);
@@ -58,15 +58,20 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
     };
 
     // 上传文件
-    const uploadFile = async (file: File) => {
+    const uploadFile = async (options:any) => {
+        console.log(options);
+        const {onSuccess,onError,file,onProgress }= options;
         const fileHash = await calculateSHA256(file);
         const totalChunks = calculateFileChunks(file);
+        file.status = 'uploading';
+        setFileList([...fileList, file]);
 
 
         let isUpload:Boolean = false
         let isRecord:boolean = false
         let chunksID:string = ""
         const needUploadChunksID:number[] = [];
+        let  progressCnt = 0;
 
 
         const uploadSingleChunk = async (chunkIndex: number) => {
@@ -79,24 +84,24 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
         };
 
         const uploadChunksConcurrently = async () => {
+            const uniqueChunkIDs = Array.from(new Set(needUploadChunksID)); // 去重
+
             let currentIndex = 0;
 
-            while (currentIndex < needUploadChunksID.length) {
-
-                const currentBatch = needUploadChunksID.slice(currentIndex, currentIndex + CONCURRENT_LIMIT);
+            while (currentIndex < uniqueChunkIDs.length) {
+                const currentBatch = uniqueChunkIDs.slice(currentIndex, currentIndex + CONCURRENT_LIMIT);
 
                 const batch = currentBatch.map(async (chunkIndex) => {
                     await uploadSingleChunk(chunkIndex); // 上传单个块
+                    progressCnt += 1;
+                    file.percent = (progressCnt / totalChunks) * 100;
+                    setFileList([...fileList, file]);
                 });
 
                 await Promise.all(batch);
-
-                // 更新当前索引
                 currentIndex += CONCURRENT_LIMIT;
             }
         };
-
-        setUploading(true);
 
         // 判断是否已经上传
         await getSuccessChunks({
@@ -108,6 +113,8 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
         });
 
         if(isUpload){
+            file.status = 'done';
+            setFileList([...fileList, file]);
             message.info(intl.formatMessage({ id: TheFileIsUploadKey }));
             return;
         }else{
@@ -118,14 +125,18 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
                     file_name: file.name,
                     file_size: file.size,
                     chunk_total_number: totalChunks,
-             });
+                }).catch((error) => {
+                    file.status = 'error';
+                    setFileList([...fileList, file]);
+                    message.error(intl.formatMessage({ id: TheFileErrorUploadKey }));
+                })
 
 
             const chunkIDArraySS = chunksID ? chunksID.split(",") : []; // 如果 chunksID 为空，则返回空数组
             const chunkIDArray = chunkIDArraySS.map((item) => parseInt(item, 10)).filter(Number.isInteger); // 过滤掉非整数值
+            progressCnt = chunkIDArray.length;
 
             if(chunkIDArray.length !== totalChunks){
-                console.log("Some chunks are missing");
                 message.info(intl.formatMessage({ id: TheFileContinueUploadKey }));
                 for (let i = 0; i < totalChunks; i++) {
                     if (!chunkIDArray.includes(i)) {
@@ -144,6 +155,8 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
         try {
             await uploadChunksConcurrently();
         } catch (error) {
+            file.status = 'error';
+            setFileList([...fileList, file]);
             message.error(intl.formatMessage({ id: TheFileErrorUploadKey }));
         }
 
@@ -153,13 +166,15 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
                     file_hash: fileHash,
                 }
             )
-            console.log("File complete successfully");
             message.success(intl.formatMessage({ id: OkKey }))
         }catch (error) {
-            console.error("Error during file upload:", error);
+            file.status = 'error';
+            setFileList([...fileList, file]);
             message.error(intl.formatMessage({ id: TheFileErrorUploadKey }));
         }finally {
             setUploading(false);
+            file.status = 'done';
+            setFileList([...fileList, file]);
         }
 
 
@@ -182,7 +197,7 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
         <>
             <Dragger
                 beforeUpload={async (file) => {
-                    setFileList([...fileList, file]);
+
                 }}
                 onRemove={(file) => {
                     setFileList((prevList) => prevList.filter((item) => item.uid !== file.uid));
@@ -190,8 +205,7 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
                 fileList={fileList}
                 multiple={true}
                 customRequest={async (options) => {
-                    console.log(options.file);
-                    await uploadFile(options.file as File);
+                    await uploadFile(options);
                 }
                 }
             >
