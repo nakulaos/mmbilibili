@@ -71,7 +71,7 @@ import {
     ShoppingKey,
     SinglePlayerGameKey,
     StarKey,
-    submissionManagementKey, TheFileContinueUploadKey, TheFileIsUploadKey,
+    submissionManagementKey, TheFileContinueUploadKey, TheFileErrorUploadKey, TheFileIsUploadKey,
     TrendKey,
     trendsKey,
     UploadKey,
@@ -184,5 +184,6 @@ export default {
     [FileKey]: "文件",
     [TheFileIsUploadKey]: "文件已上传",
     [TheFileContinueUploadKey]: "文件继续上传",
+    [TheFileErrorUploadKey]: "文件上传错误",
 };
 
