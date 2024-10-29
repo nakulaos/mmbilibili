@@ -113,3 +113,4 @@ export const DownloadKey = "Download";
 export const FileKey = "File";
 export const TheFileIsUploadKey = "TheFileIsUpload";
 export const TheFileContinueUploadKey = "TheFileContinueUpload";
+export const TheFileErrorUploadKey = "TheFileErrorUpload";

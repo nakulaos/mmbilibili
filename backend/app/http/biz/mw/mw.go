@@ -32,10 +32,12 @@ func JWTMiddleware() app.HandlerFunc {
 			metric.IncrGauge(metric.LibClient, constant.PromRedisUserTokenBlackList)
 			tools.SendErrResponse(c, ctx, http.StatusInternalServerError, ecode.ServerError)
 			ctx.Abort()
+			return
 		}
 		if result != "" {
 			tools.SendErrResponse(c, ctx, http.StatusUnauthorized, ecode.AuthorizationError)
 			ctx.Abort()
+			return
 		}
 
 		kind = ctx.Request.Header.Get("Kind")
@@ -46,6 +48,7 @@ func JWTMiddleware() app.HandlerFunc {
 		if token == "" {
 			tools.SendErrResponse(c, ctx, http.StatusUnauthorized, ecode.AuthorizationError)
 			ctx.Abort()
+			return
 		}
 
 		if kind == "access" {
@@ -54,10 +57,12 @@ func JWTMiddleware() app.HandlerFunc {
 			secret = cf.App.RefreshTokenSecret
 		}
 
+		err = nil
 		claims, err := tools.VerifyToken(token, secret)
 		if err != nil {
 			tools.SendErrResponse(c, ctx, http.StatusUnauthorized, ecode.AuthorizationError)
 			ctx.Abort()
+			return
 		}
 		ctx.Set("claims", claims)
 		ctx.Set("uid", claims.UserID)

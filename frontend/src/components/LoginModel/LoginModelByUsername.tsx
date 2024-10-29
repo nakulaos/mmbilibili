@@ -48,11 +48,13 @@ export const LoginModelByUsername = forwardRef((props: LoginModelByUsernameProps
                 gender: res.data.user_info.gender,
                 role: res.data.user_info.role,
             };
-
             dispatch(setUserInfo(userInfo));
+            message.success(intl.formatMessage({ id: OkKey }));
+            console.log('Login successfully');
             props.onReset();
+
         }).catch((error) => {
-          console.log(error)
+            message.error(error.message);
         })
     };
 

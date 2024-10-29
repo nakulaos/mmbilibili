@@ -2,7 +2,7 @@ import { message, Upload, UploadFile } from 'antd'
 import React, { useState } from 'react'
 import { InboxOutlined } from '@ant-design/icons'
 import { completeMultipart, getMultiUploadUri, getSuccessChunks, newMultiUpload } from '@/api/fileApi'
-import { TheFileContinueUploadKey, TheFileIsUploadKey } from '@/locales/locale'
+import { OkKey, TheFileContinueUploadKey, TheFileErrorUploadKey, TheFileIsUploadKey } from '@/locales/locale'
 import { useIntl } from 'react-intl'
 
 
@@ -13,6 +13,7 @@ type FileUploaderProps = {
     FileType : number,
 }
 
+// TODO 暂停上传功能，文件进度条，上传速度，上传失败重试，上传成功提示
 export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [uploading, setUploading] = useState(false);
@@ -58,7 +59,6 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
 
     // 上传文件
     const uploadFile = async (file: File) => {
-        console.log("Start uploading file:", file);
         const fileHash = await calculateSHA256(file);
         const totalChunks = calculateFileChunks(file);
 
@@ -70,7 +70,6 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
 
 
         const uploadSingleChunk = async (chunkIndex: number) => {
-            console.log(`Uploading chunk ${chunkIndex + 1} of ${totalChunks}`);
             const start = chunkIndex * CHUNK_SIZE;
             const end = Math.min(start + CHUNK_SIZE, file.size);
             const chunk = file.slice(start, end);
@@ -83,7 +82,6 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
             let currentIndex = 0;
 
             while (currentIndex < needUploadChunksID.length) {
-                console.log(`Uploading chunks ${currentIndex + 1} to ${Math.min(currentIndex + CONCURRENT_LIMIT, needUploadChunksID.length)} of ${needUploadChunksID.length}`);
 
                 const currentBatch = needUploadChunksID.slice(currentIndex, currentIndex + CONCURRENT_LIMIT);
 
@@ -110,8 +108,6 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
         });
 
         if(isUpload){
-            // 秒传
-            console.log("File has been uploaded");
             message.info(intl.formatMessage({ id: TheFileIsUploadKey }));
             return;
         }else{
@@ -127,8 +123,6 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
 
             const chunkIDArraySS = chunksID ? chunksID.split(",") : []; // 如果 chunksID 为空，则返回空数组
             const chunkIDArray = chunkIDArraySS.map((item) => parseInt(item, 10)).filter(Number.isInteger); // 过滤掉非整数值
-
-            console.log("chunkIDArray",chunkIDArray);
 
             if(chunkIDArray.length !== totalChunks){
                 console.log("Some chunks are missing");
@@ -149,9 +143,8 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
 
         try {
             await uploadChunksConcurrently();
-            console.log("File uploaded successfully");
         } catch (error) {
-            console.error("Error during file upload:", error);
+            message.error(intl.formatMessage({ id: TheFileErrorUploadKey }));
         }
 
         try {
@@ -161,8 +154,10 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
                 }
             )
             console.log("File complete successfully");
+            message.success(intl.formatMessage({ id: OkKey }))
         }catch (error) {
             console.error("Error during file upload:", error);
+            message.error(intl.formatMessage({ id: TheFileErrorUploadKey }));
         }finally {
             setUploading(false);
         }

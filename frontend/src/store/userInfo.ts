@@ -68,11 +68,18 @@ const userInfoSlice = createSlice({
       state.accessToken = '';
       state.refreshToken = '';
     },
+    clearAccessToken(state) {
+        state.accessToken = '';
+    },
+    clearRefreshToken(state) {
+        state.refreshToken = '';
+    } ,
+
     setRefreshToken(state, action: PayloadAction<string>) {
         state.refreshToken = action.payload;
     }
   },
 });
 
-export const { setUserInfo, clearUserInfo,clearToken,setAccessToken,setRefreshToken } = userInfoSlice.actions;
+export const { setUserInfo, clearUserInfo,clearToken,clearRefreshToken,clearAccessToken,setAccessToken,setRefreshToken } = userInfoSlice.actions;
 export default userInfoSlice.reducer;

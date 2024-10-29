@@ -10,7 +10,7 @@ import {
     followersKey,
     followingsKey,
     loginKey,
-    logoutKey,
+    logoutKey, OkKey,
     personalCenterKey,
     recommendationServiceKey,
     registerKey,
@@ -53,6 +53,7 @@ export const CustomAvatarContent: React.FC = () => {
             }).then((res) => {
                 dispatch(clearUserInfo())
                 dispatch(clearToken())
+                message.success(intl.formatMessage({ id: OkKey }))
             },(error)=>{
                 dispatch(clearUserInfo())
                 dispatch(clearToken())
