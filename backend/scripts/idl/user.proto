@@ -4,14 +4,6 @@ package user;
 
 option go_package = "/user";
 
-message Info {
-  string title = 1;
-  string desc = 2;
-  string author = 3;
-  string email = 4;
-  string version = 5;
-}
-
 // 用户登录请求
 message LoginWithUsernameReq {
   string username = 1; // 账号名
@@ -56,6 +48,11 @@ message User {
   uint32 status = 18; // 状态
 }
 
+message UserRelationship {
+  int64 rid = 1; // 关系用户ID
+  int64 attr = 2; // 关系类型
+}
+
 // 登录响应
 message LoginResp {
   string access_token = 1; // 访问令牌
@@ -88,69 +85,48 @@ message LogoutReq {
 
 message LogoutResp {}
 
-// 关注用户请求
-message FollowUserReq {
-  uint32 user_id = 1; // 用户ID
-  uint32 action_id = 2; // 动作ID
-  int32 action = 3; // 动作（1:关注，2:取关）
-}
-
-message FollowUserResp {
-
-}
 
 
 // 粉丝列表请求
 message FollowerListReq {
-  uint32 action_id = 1; // 动作ID
-  int32 page = 2; // 页码
-  int32 page_size = 3; // 每页数量
-  int32 total = 4; // 总数
+  int64 action_id = 1; // 动作ID
+  int64 page = 2; // 页码
+  int64 page_size = 3; // 每页数量
+  int64 total = 4; // 总数
 }
 
 // 粉丝列表响应
 message FollowerListResp {
-  int32 total = 1; // 总数
+  int64 total = 1; // 总数
   repeated User list = 2; // 用户列表
 }
 
 // 关注列表请求
 message FollowingListReq {
-  uint32 action_id = 1; // 动作ID
-  int32 page = 2; // 页码
-  int32 page_size = 3; // 每页数量
-  int32 total = 4; // 总数
+  int64 action_id = 1; // 动作ID
+  int64 page = 2; // 页码
+  int64 page_size = 3; // 每页数量
+  int64 total = 4; // 总数
 }
 
 // 关注列表响应
 message FollowingListResp {
-  int32 total = 1; // 总数
+  int64 total = 1; // 总数
   repeated User list = 2; // 用户列表
 }
 
 // 好友列表请求
 message FriendListReq {
-  uint32 action_id = 1; // 动作ID
-  int32 page = 2; // 页码
-  int32 page_size = 3; // 每页数量
-  int32 total = 4; // 总数
+  int64 action_id = 1; // 动作ID
+  int64 page = 2; // 页码
+  int64 page_size = 3; // 每页数量
+  int64 total = 4; // 总数
 }
 
 // 好友列表响应
 message FriendListResp {
-  int32 total = 1; // 总数
+  int64 total = 1; // 总数
   repeated User list = 2; // 用户列表
-}
-
-// 用户上传文件请求
-message UserUploadFileReq {
-  string kind = 1; // 文件类型（avatar, cover, video）
-}
-
-// 用户上传文件响应
-message UserUploadFileResp {
-  string url = 1; // 文件URL
-  string cover_url = 2; // 封面URL
 }
 
 message RefreshTokenReq {
@@ -163,6 +139,70 @@ message RefreshTokenResp {
   string refresh_token = 2; // 刷新令牌
 }
 
+message AddFollowingReq{
+  int64 uid = 1;
+  int64 rid = 2;
+}
+
+message AddFollowingResp{
+
+}
+
+message DelFollowingReq{
+  int64 uid = 1;
+  int64 rid = 2;
+}
+
+message DelFollowingResp{
+
+}
+
+message AddWhisperReq{
+  int64 uid = 1;
+  int64 rid = 2;
+}
+
+message AddWhisperResp{
+
+}
+
+message DelWhisperReq{
+  int64 uid = 1;
+  int64 rid = 2;
+}
+
+message DelWhisperResp{
+
+}
+
+message AddBlackReq{
+  int64 uid = 1;
+  int64 rid = 2;
+}
+
+message AddBlackResp{
+
+}
+
+message DelBlackReq{
+  int64 uid = 1;
+  int64 rid = 2;
+}
+
+message DelBlackResp{
+
+}
+
+message GetUserRelationshipReq{
+  int64 uid = 1;
+  repeated int64 rids = 2;
+}
+
+message GetUserRelationshipResp{
+  repeated UserRelationship list = 1;
+}
+
+
 // 服务定义
 service UserRpcService {
   rpc LoginWithUsername(LoginWithUsernameReq) returns (LoginResp);
@@ -171,10 +211,15 @@ service UserRpcService {
   rpc Register(RegisterReq) returns (LoginResp);
   rpc UpdateUserInfo(UpdateUserInfoReq) returns (UpdateUserInfoResp);
   rpc Logout(LogoutReq) returns (LogoutResp);
-  rpc FollowUser(FollowUserReq) returns (FollowUserResp);
   rpc FollowerList(FollowerListReq) returns (FollowerListResp);
   rpc FollowingList(FollowingListReq) returns (FollowingListResp);
   rpc FriendList(FriendListReq) returns (FriendListResp);
-  rpc UserUploadFile(UserUploadFileReq) returns (UserUploadFileResp);
   rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenResp);
+  rpc AddFollowing(AddFollowingReq) returns (AddFollowingResp);
+  rpc AddWhisper(AddWhisperReq) returns (AddWhisperResp);
+  rpc AddBlack(AddBlackReq) returns (AddBlackResp);
+  rpc DelFollowing(DelFollowingReq) returns (DelFollowingResp);
+  rpc DelWhisper(DelWhisperReq) returns (DelWhisperResp);
+  rpc DelBlack(DelBlackReq) returns (DelBlackResp);
+  rpc GetUserRelationship(GetUserRelationshipReq) returns (GetUserRelationshipResp);
 }

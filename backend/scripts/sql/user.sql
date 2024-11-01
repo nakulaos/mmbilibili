@@ -48,6 +48,8 @@ CREATE TABLE user_relevant_counts (
                                       live_count BIGINT NOT NULL DEFAULT 0 COMMENT '直播次数',
                                       work_count BIGINT NOT NULL DEFAULT 0 COMMENT '作品数',
                                       friend_count BIGINT NOT NULL DEFAULT 0 COMMENT '朋友数',
+                                      whisper_count BIGINT NOT NULL DEFAULT 0 COMMENT '私信数',
+                                      black_count BIGINT NOT NULL DEFAULT 0 COMMENT '黑名单数',
                                       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                                       updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                                       deleted_at DATETIME DEFAULT NULL COMMENT '删除时间',

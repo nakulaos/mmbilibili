@@ -57,13 +57,6 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
-	"FollowUser": kitex.NewMethodInfo(
-		followUserHandler,
-		newFollowUserArgs,
-		newFollowUserResult,
-		false,
-		kitex.WithStreamingMode(kitex.StreamingUnary),
-	),
 	"FollowerList": kitex.NewMethodInfo(
 		followerListHandler,
 		newFollowerListArgs,
@@ -85,17 +78,59 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
-	"UserUploadFile": kitex.NewMethodInfo(
-		userUploadFileHandler,
-		newUserUploadFileArgs,
-		newUserUploadFileResult,
-		false,
-		kitex.WithStreamingMode(kitex.StreamingUnary),
-	),
 	"RefreshToken": kitex.NewMethodInfo(
 		refreshTokenHandler,
 		newRefreshTokenArgs,
 		newRefreshTokenResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"AddFollowing": kitex.NewMethodInfo(
+		addFollowingHandler,
+		newAddFollowingArgs,
+		newAddFollowingResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"AddWhisper": kitex.NewMethodInfo(
+		addWhisperHandler,
+		newAddWhisperArgs,
+		newAddWhisperResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"AddBlack": kitex.NewMethodInfo(
+		addBlackHandler,
+		newAddBlackArgs,
+		newAddBlackResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"DelFollowing": kitex.NewMethodInfo(
+		delFollowingHandler,
+		newDelFollowingArgs,
+		newDelFollowingResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"DelWhisper": kitex.NewMethodInfo(
+		delWhisperHandler,
+		newDelWhisperArgs,
+		newDelWhisperResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"DelBlack": kitex.NewMethodInfo(
+		delBlackHandler,
+		newDelBlackArgs,
+		newDelBlackResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"GetUserRelationship": kitex.NewMethodInfo(
+		getUserRelationshipHandler,
+		newGetUserRelationshipArgs,
+		newGetUserRelationshipResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
@@ -1083,159 +1118,6 @@ func (p *LogoutResult) GetResult() interface{} {
 	return p.Success
 }
 
-func followUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	switch s := arg.(type) {
-	case *streaming.Args:
-		st := s.Stream
-		req := new(user.FollowUserReq)
-		if err := st.RecvMsg(req); err != nil {
-			return err
-		}
-		resp, err := handler.(user.UserRpcService).FollowUser(ctx, req)
-		if err != nil {
-			return err
-		}
-		return st.SendMsg(resp)
-	case *FollowUserArgs:
-		success, err := handler.(user.UserRpcService).FollowUser(ctx, s.Req)
-		if err != nil {
-			return err
-		}
-		realResult := result.(*FollowUserResult)
-		realResult.Success = success
-		return nil
-	default:
-		return errInvalidMessageType
-	}
-}
-func newFollowUserArgs() interface{} {
-	return &FollowUserArgs{}
-}
-
-func newFollowUserResult() interface{} {
-	return &FollowUserResult{}
-}
-
-type FollowUserArgs struct {
-	Req *user.FollowUserReq
-}
-
-func (p *FollowUserArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
-	if !p.IsSetReq() {
-		p.Req = new(user.FollowUserReq)
-	}
-	return p.Req.FastRead(buf, _type, number)
-}
-
-func (p *FollowUserArgs) FastWrite(buf []byte) (n int) {
-	if !p.IsSetReq() {
-		return 0
-	}
-	return p.Req.FastWrite(buf)
-}
-
-func (p *FollowUserArgs) Size() (n int) {
-	if !p.IsSetReq() {
-		return 0
-	}
-	return p.Req.Size()
-}
-
-func (p *FollowUserArgs) Marshal(out []byte) ([]byte, error) {
-	if !p.IsSetReq() {
-		return out, nil
-	}
-	return proto.Marshal(p.Req)
-}
-
-func (p *FollowUserArgs) Unmarshal(in []byte) error {
-	msg := new(user.FollowUserReq)
-	if err := proto.Unmarshal(in, msg); err != nil {
-		return err
-	}
-	p.Req = msg
-	return nil
-}
-
-var FollowUserArgs_Req_DEFAULT *user.FollowUserReq
-
-func (p *FollowUserArgs) GetReq() *user.FollowUserReq {
-	if !p.IsSetReq() {
-		return FollowUserArgs_Req_DEFAULT
-	}
-	return p.Req
-}
-
-func (p *FollowUserArgs) IsSetReq() bool {
-	return p.Req != nil
-}
-
-func (p *FollowUserArgs) GetFirstArgument() interface{} {
-	return p.Req
-}
-
-type FollowUserResult struct {
-	Success *user.FollowUserResp
-}
-
-var FollowUserResult_Success_DEFAULT *user.FollowUserResp
-
-func (p *FollowUserResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
-	if !p.IsSetSuccess() {
-		p.Success = new(user.FollowUserResp)
-	}
-	return p.Success.FastRead(buf, _type, number)
-}
-
-func (p *FollowUserResult) FastWrite(buf []byte) (n int) {
-	if !p.IsSetSuccess() {
-		return 0
-	}
-	return p.Success.FastWrite(buf)
-}
-
-func (p *FollowUserResult) Size() (n int) {
-	if !p.IsSetSuccess() {
-		return 0
-	}
-	return p.Success.Size()
-}
-
-func (p *FollowUserResult) Marshal(out []byte) ([]byte, error) {
-	if !p.IsSetSuccess() {
-		return out, nil
-	}
-	return proto.Marshal(p.Success)
-}
-
-func (p *FollowUserResult) Unmarshal(in []byte) error {
-	msg := new(user.FollowUserResp)
-	if err := proto.Unmarshal(in, msg); err != nil {
-		return err
-	}
-	p.Success = msg
-	return nil
-}
-
-func (p *FollowUserResult) GetSuccess() *user.FollowUserResp {
-	if !p.IsSetSuccess() {
-		return FollowUserResult_Success_DEFAULT
-	}
-	return p.Success
-}
-
-func (p *FollowUserResult) SetSuccess(x interface{}) {
-	p.Success = x.(*user.FollowUserResp)
-}
-
-func (p *FollowUserResult) IsSetSuccess() bool {
-	return p.Success != nil
-}
-
-func (p *FollowUserResult) GetResult() interface{} {
-	return p.Success
-}
-
 func followerListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	switch s := arg.(type) {
 	case *streaming.Args:
@@ -1695,159 +1577,6 @@ func (p *FriendListResult) GetResult() interface{} {
 	return p.Success
 }
 
-func userUploadFileHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	switch s := arg.(type) {
-	case *streaming.Args:
-		st := s.Stream
-		req := new(user.UserUploadFileReq)
-		if err := st.RecvMsg(req); err != nil {
-			return err
-		}
-		resp, err := handler.(user.UserRpcService).UserUploadFile(ctx, req)
-		if err != nil {
-			return err
-		}
-		return st.SendMsg(resp)
-	case *UserUploadFileArgs:
-		success, err := handler.(user.UserRpcService).UserUploadFile(ctx, s.Req)
-		if err != nil {
-			return err
-		}
-		realResult := result.(*UserUploadFileResult)
-		realResult.Success = success
-		return nil
-	default:
-		return errInvalidMessageType
-	}
-}
-func newUserUploadFileArgs() interface{} {
-	return &UserUploadFileArgs{}
-}
-
-func newUserUploadFileResult() interface{} {
-	return &UserUploadFileResult{}
-}
-
-type UserUploadFileArgs struct {
-	Req *user.UserUploadFileReq
-}
-
-func (p *UserUploadFileArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
-	if !p.IsSetReq() {
-		p.Req = new(user.UserUploadFileReq)
-	}
-	return p.Req.FastRead(buf, _type, number)
-}
-
-func (p *UserUploadFileArgs) FastWrite(buf []byte) (n int) {
-	if !p.IsSetReq() {
-		return 0
-	}
-	return p.Req.FastWrite(buf)
-}
-
-func (p *UserUploadFileArgs) Size() (n int) {
-	if !p.IsSetReq() {
-		return 0
-	}
-	return p.Req.Size()
-}
-
-func (p *UserUploadFileArgs) Marshal(out []byte) ([]byte, error) {
-	if !p.IsSetReq() {
-		return out, nil
-	}
-	return proto.Marshal(p.Req)
-}
-
-func (p *UserUploadFileArgs) Unmarshal(in []byte) error {
-	msg := new(user.UserUploadFileReq)
-	if err := proto.Unmarshal(in, msg); err != nil {
-		return err
-	}
-	p.Req = msg
-	return nil
-}
-
-var UserUploadFileArgs_Req_DEFAULT *user.UserUploadFileReq
-
-func (p *UserUploadFileArgs) GetReq() *user.UserUploadFileReq {
-	if !p.IsSetReq() {
-		return UserUploadFileArgs_Req_DEFAULT
-	}
-	return p.Req
-}
-
-func (p *UserUploadFileArgs) IsSetReq() bool {
-	return p.Req != nil
-}
-
-func (p *UserUploadFileArgs) GetFirstArgument() interface{} {
-	return p.Req
-}
-
-type UserUploadFileResult struct {
-	Success *user.UserUploadFileResp
-}
-
-var UserUploadFileResult_Success_DEFAULT *user.UserUploadFileResp
-
-func (p *UserUploadFileResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
-	if !p.IsSetSuccess() {
-		p.Success = new(user.UserUploadFileResp)
-	}
-	return p.Success.FastRead(buf, _type, number)
-}
-
-func (p *UserUploadFileResult) FastWrite(buf []byte) (n int) {
-	if !p.IsSetSuccess() {
-		return 0
-	}
-	return p.Success.FastWrite(buf)
-}
-
-func (p *UserUploadFileResult) Size() (n int) {
-	if !p.IsSetSuccess() {
-		return 0
-	}
-	return p.Success.Size()
-}
-
-func (p *UserUploadFileResult) Marshal(out []byte) ([]byte, error) {
-	if !p.IsSetSuccess() {
-		return out, nil
-	}
-	return proto.Marshal(p.Success)
-}
-
-func (p *UserUploadFileResult) Unmarshal(in []byte) error {
-	msg := new(user.UserUploadFileResp)
-	if err := proto.Unmarshal(in, msg); err != nil {
-		return err
-	}
-	p.Success = msg
-	return nil
-}
-
-func (p *UserUploadFileResult) GetSuccess() *user.UserUploadFileResp {
-	if !p.IsSetSuccess() {
-		return UserUploadFileResult_Success_DEFAULT
-	}
-	return p.Success
-}
-
-func (p *UserUploadFileResult) SetSuccess(x interface{}) {
-	p.Success = x.(*user.UserUploadFileResp)
-}
-
-func (p *UserUploadFileResult) IsSetSuccess() bool {
-	return p.Success != nil
-}
-
-func (p *UserUploadFileResult) GetResult() interface{} {
-	return p.Success
-}
-
 func refreshTokenHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	switch s := arg.(type) {
 	case *streaming.Args:
@@ -2001,6 +1730,1077 @@ func (p *RefreshTokenResult) GetResult() interface{} {
 	return p.Success
 }
 
+func addFollowingHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(user.AddFollowingReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(user.UserRpcService).AddFollowing(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *AddFollowingArgs:
+		success, err := handler.(user.UserRpcService).AddFollowing(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*AddFollowingResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newAddFollowingArgs() interface{} {
+	return &AddFollowingArgs{}
+}
+
+func newAddFollowingResult() interface{} {
+	return &AddFollowingResult{}
+}
+
+type AddFollowingArgs struct {
+	Req *user.AddFollowingReq
+}
+
+func (p *AddFollowingArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(user.AddFollowingReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *AddFollowingArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *AddFollowingArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *AddFollowingArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *AddFollowingArgs) Unmarshal(in []byte) error {
+	msg := new(user.AddFollowingReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var AddFollowingArgs_Req_DEFAULT *user.AddFollowingReq
+
+func (p *AddFollowingArgs) GetReq() *user.AddFollowingReq {
+	if !p.IsSetReq() {
+		return AddFollowingArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AddFollowingArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *AddFollowingArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type AddFollowingResult struct {
+	Success *user.AddFollowingResp
+}
+
+var AddFollowingResult_Success_DEFAULT *user.AddFollowingResp
+
+func (p *AddFollowingResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(user.AddFollowingResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *AddFollowingResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *AddFollowingResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *AddFollowingResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *AddFollowingResult) Unmarshal(in []byte) error {
+	msg := new(user.AddFollowingResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AddFollowingResult) GetSuccess() *user.AddFollowingResp {
+	if !p.IsSetSuccess() {
+		return AddFollowingResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AddFollowingResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.AddFollowingResp)
+}
+
+func (p *AddFollowingResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AddFollowingResult) GetResult() interface{} {
+	return p.Success
+}
+
+func addWhisperHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(user.AddWhisperReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(user.UserRpcService).AddWhisper(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *AddWhisperArgs:
+		success, err := handler.(user.UserRpcService).AddWhisper(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*AddWhisperResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newAddWhisperArgs() interface{} {
+	return &AddWhisperArgs{}
+}
+
+func newAddWhisperResult() interface{} {
+	return &AddWhisperResult{}
+}
+
+type AddWhisperArgs struct {
+	Req *user.AddWhisperReq
+}
+
+func (p *AddWhisperArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(user.AddWhisperReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *AddWhisperArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *AddWhisperArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *AddWhisperArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *AddWhisperArgs) Unmarshal(in []byte) error {
+	msg := new(user.AddWhisperReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var AddWhisperArgs_Req_DEFAULT *user.AddWhisperReq
+
+func (p *AddWhisperArgs) GetReq() *user.AddWhisperReq {
+	if !p.IsSetReq() {
+		return AddWhisperArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AddWhisperArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *AddWhisperArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type AddWhisperResult struct {
+	Success *user.AddWhisperResp
+}
+
+var AddWhisperResult_Success_DEFAULT *user.AddWhisperResp
+
+func (p *AddWhisperResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(user.AddWhisperResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *AddWhisperResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *AddWhisperResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *AddWhisperResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *AddWhisperResult) Unmarshal(in []byte) error {
+	msg := new(user.AddWhisperResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AddWhisperResult) GetSuccess() *user.AddWhisperResp {
+	if !p.IsSetSuccess() {
+		return AddWhisperResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AddWhisperResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.AddWhisperResp)
+}
+
+func (p *AddWhisperResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AddWhisperResult) GetResult() interface{} {
+	return p.Success
+}
+
+func addBlackHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(user.AddBlackReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(user.UserRpcService).AddBlack(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *AddBlackArgs:
+		success, err := handler.(user.UserRpcService).AddBlack(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*AddBlackResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newAddBlackArgs() interface{} {
+	return &AddBlackArgs{}
+}
+
+func newAddBlackResult() interface{} {
+	return &AddBlackResult{}
+}
+
+type AddBlackArgs struct {
+	Req *user.AddBlackReq
+}
+
+func (p *AddBlackArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(user.AddBlackReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *AddBlackArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *AddBlackArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *AddBlackArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *AddBlackArgs) Unmarshal(in []byte) error {
+	msg := new(user.AddBlackReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var AddBlackArgs_Req_DEFAULT *user.AddBlackReq
+
+func (p *AddBlackArgs) GetReq() *user.AddBlackReq {
+	if !p.IsSetReq() {
+		return AddBlackArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AddBlackArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *AddBlackArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type AddBlackResult struct {
+	Success *user.AddBlackResp
+}
+
+var AddBlackResult_Success_DEFAULT *user.AddBlackResp
+
+func (p *AddBlackResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(user.AddBlackResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *AddBlackResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *AddBlackResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *AddBlackResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *AddBlackResult) Unmarshal(in []byte) error {
+	msg := new(user.AddBlackResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AddBlackResult) GetSuccess() *user.AddBlackResp {
+	if !p.IsSetSuccess() {
+		return AddBlackResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AddBlackResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.AddBlackResp)
+}
+
+func (p *AddBlackResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AddBlackResult) GetResult() interface{} {
+	return p.Success
+}
+
+func delFollowingHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(user.DelFollowingReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(user.UserRpcService).DelFollowing(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *DelFollowingArgs:
+		success, err := handler.(user.UserRpcService).DelFollowing(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*DelFollowingResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newDelFollowingArgs() interface{} {
+	return &DelFollowingArgs{}
+}
+
+func newDelFollowingResult() interface{} {
+	return &DelFollowingResult{}
+}
+
+type DelFollowingArgs struct {
+	Req *user.DelFollowingReq
+}
+
+func (p *DelFollowingArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(user.DelFollowingReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *DelFollowingArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *DelFollowingArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *DelFollowingArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *DelFollowingArgs) Unmarshal(in []byte) error {
+	msg := new(user.DelFollowingReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var DelFollowingArgs_Req_DEFAULT *user.DelFollowingReq
+
+func (p *DelFollowingArgs) GetReq() *user.DelFollowingReq {
+	if !p.IsSetReq() {
+		return DelFollowingArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *DelFollowingArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *DelFollowingArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type DelFollowingResult struct {
+	Success *user.DelFollowingResp
+}
+
+var DelFollowingResult_Success_DEFAULT *user.DelFollowingResp
+
+func (p *DelFollowingResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(user.DelFollowingResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *DelFollowingResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *DelFollowingResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *DelFollowingResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *DelFollowingResult) Unmarshal(in []byte) error {
+	msg := new(user.DelFollowingResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DelFollowingResult) GetSuccess() *user.DelFollowingResp {
+	if !p.IsSetSuccess() {
+		return DelFollowingResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DelFollowingResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.DelFollowingResp)
+}
+
+func (p *DelFollowingResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DelFollowingResult) GetResult() interface{} {
+	return p.Success
+}
+
+func delWhisperHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(user.DelWhisperReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(user.UserRpcService).DelWhisper(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *DelWhisperArgs:
+		success, err := handler.(user.UserRpcService).DelWhisper(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*DelWhisperResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newDelWhisperArgs() interface{} {
+	return &DelWhisperArgs{}
+}
+
+func newDelWhisperResult() interface{} {
+	return &DelWhisperResult{}
+}
+
+type DelWhisperArgs struct {
+	Req *user.DelWhisperReq
+}
+
+func (p *DelWhisperArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(user.DelWhisperReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *DelWhisperArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *DelWhisperArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *DelWhisperArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *DelWhisperArgs) Unmarshal(in []byte) error {
+	msg := new(user.DelWhisperReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var DelWhisperArgs_Req_DEFAULT *user.DelWhisperReq
+
+func (p *DelWhisperArgs) GetReq() *user.DelWhisperReq {
+	if !p.IsSetReq() {
+		return DelWhisperArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *DelWhisperArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *DelWhisperArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type DelWhisperResult struct {
+	Success *user.DelWhisperResp
+}
+
+var DelWhisperResult_Success_DEFAULT *user.DelWhisperResp
+
+func (p *DelWhisperResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(user.DelWhisperResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *DelWhisperResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *DelWhisperResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *DelWhisperResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *DelWhisperResult) Unmarshal(in []byte) error {
+	msg := new(user.DelWhisperResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DelWhisperResult) GetSuccess() *user.DelWhisperResp {
+	if !p.IsSetSuccess() {
+		return DelWhisperResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DelWhisperResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.DelWhisperResp)
+}
+
+func (p *DelWhisperResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DelWhisperResult) GetResult() interface{} {
+	return p.Success
+}
+
+func delBlackHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(user.DelBlackReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(user.UserRpcService).DelBlack(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *DelBlackArgs:
+		success, err := handler.(user.UserRpcService).DelBlack(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*DelBlackResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newDelBlackArgs() interface{} {
+	return &DelBlackArgs{}
+}
+
+func newDelBlackResult() interface{} {
+	return &DelBlackResult{}
+}
+
+type DelBlackArgs struct {
+	Req *user.DelBlackReq
+}
+
+func (p *DelBlackArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(user.DelBlackReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *DelBlackArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *DelBlackArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *DelBlackArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *DelBlackArgs) Unmarshal(in []byte) error {
+	msg := new(user.DelBlackReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var DelBlackArgs_Req_DEFAULT *user.DelBlackReq
+
+func (p *DelBlackArgs) GetReq() *user.DelBlackReq {
+	if !p.IsSetReq() {
+		return DelBlackArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *DelBlackArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *DelBlackArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type DelBlackResult struct {
+	Success *user.DelBlackResp
+}
+
+var DelBlackResult_Success_DEFAULT *user.DelBlackResp
+
+func (p *DelBlackResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(user.DelBlackResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *DelBlackResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *DelBlackResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *DelBlackResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *DelBlackResult) Unmarshal(in []byte) error {
+	msg := new(user.DelBlackResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DelBlackResult) GetSuccess() *user.DelBlackResp {
+	if !p.IsSetSuccess() {
+		return DelBlackResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DelBlackResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.DelBlackResp)
+}
+
+func (p *DelBlackResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DelBlackResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getUserRelationshipHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(user.GetUserRelationshipReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(user.UserRpcService).GetUserRelationship(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetUserRelationshipArgs:
+		success, err := handler.(user.UserRpcService).GetUserRelationship(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetUserRelationshipResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newGetUserRelationshipArgs() interface{} {
+	return &GetUserRelationshipArgs{}
+}
+
+func newGetUserRelationshipResult() interface{} {
+	return &GetUserRelationshipResult{}
+}
+
+type GetUserRelationshipArgs struct {
+	Req *user.GetUserRelationshipReq
+}
+
+func (p *GetUserRelationshipArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(user.GetUserRelationshipReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *GetUserRelationshipArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *GetUserRelationshipArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *GetUserRelationshipArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetUserRelationshipArgs) Unmarshal(in []byte) error {
+	msg := new(user.GetUserRelationshipReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetUserRelationshipArgs_Req_DEFAULT *user.GetUserRelationshipReq
+
+func (p *GetUserRelationshipArgs) GetReq() *user.GetUserRelationshipReq {
+	if !p.IsSetReq() {
+		return GetUserRelationshipArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetUserRelationshipArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetUserRelationshipArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetUserRelationshipResult struct {
+	Success *user.GetUserRelationshipResp
+}
+
+var GetUserRelationshipResult_Success_DEFAULT *user.GetUserRelationshipResp
+
+func (p *GetUserRelationshipResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(user.GetUserRelationshipResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *GetUserRelationshipResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *GetUserRelationshipResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *GetUserRelationshipResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetUserRelationshipResult) Unmarshal(in []byte) error {
+	msg := new(user.GetUserRelationshipResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserRelationshipResult) GetSuccess() *user.GetUserRelationshipResp {
+	if !p.IsSetSuccess() {
+		return GetUserRelationshipResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetUserRelationshipResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.GetUserRelationshipResp)
+}
+
+func (p *GetUserRelationshipResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetUserRelationshipResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -2071,16 +2871,6 @@ func (p *kClient) Logout(ctx context.Context, Req *user.LogoutReq) (r *user.Logo
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) FollowUser(ctx context.Context, Req *user.FollowUserReq) (r *user.FollowUserResp, err error) {
-	var _args FollowUserArgs
-	_args.Req = Req
-	var _result FollowUserResult
-	if err = p.c.Call(ctx, "FollowUser", &_args, &_result); err != nil {
-		return
-	}
-	return _result.GetSuccess(), nil
-}
-
 func (p *kClient) FollowerList(ctx context.Context, Req *user.FollowerListReq) (r *user.FollowerListResp, err error) {
 	var _args FollowerListArgs
 	_args.Req = Req
@@ -2111,21 +2901,81 @@ func (p *kClient) FriendList(ctx context.Context, Req *user.FriendListReq) (r *u
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UserUploadFile(ctx context.Context, Req *user.UserUploadFileReq) (r *user.UserUploadFileResp, err error) {
-	var _args UserUploadFileArgs
-	_args.Req = Req
-	var _result UserUploadFileResult
-	if err = p.c.Call(ctx, "UserUploadFile", &_args, &_result); err != nil {
-		return
-	}
-	return _result.GetSuccess(), nil
-}
-
 func (p *kClient) RefreshToken(ctx context.Context, Req *user.RefreshTokenReq) (r *user.RefreshTokenResp, err error) {
 	var _args RefreshTokenArgs
 	_args.Req = Req
 	var _result RefreshTokenResult
 	if err = p.c.Call(ctx, "RefreshToken", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) AddFollowing(ctx context.Context, Req *user.AddFollowingReq) (r *user.AddFollowingResp, err error) {
+	var _args AddFollowingArgs
+	_args.Req = Req
+	var _result AddFollowingResult
+	if err = p.c.Call(ctx, "AddFollowing", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) AddWhisper(ctx context.Context, Req *user.AddWhisperReq) (r *user.AddWhisperResp, err error) {
+	var _args AddWhisperArgs
+	_args.Req = Req
+	var _result AddWhisperResult
+	if err = p.c.Call(ctx, "AddWhisper", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) AddBlack(ctx context.Context, Req *user.AddBlackReq) (r *user.AddBlackResp, err error) {
+	var _args AddBlackArgs
+	_args.Req = Req
+	var _result AddBlackResult
+	if err = p.c.Call(ctx, "AddBlack", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DelFollowing(ctx context.Context, Req *user.DelFollowingReq) (r *user.DelFollowingResp, err error) {
+	var _args DelFollowingArgs
+	_args.Req = Req
+	var _result DelFollowingResult
+	if err = p.c.Call(ctx, "DelFollowing", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DelWhisper(ctx context.Context, Req *user.DelWhisperReq) (r *user.DelWhisperResp, err error) {
+	var _args DelWhisperArgs
+	_args.Req = Req
+	var _result DelWhisperResult
+	if err = p.c.Call(ctx, "DelWhisper", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DelBlack(ctx context.Context, Req *user.DelBlackReq) (r *user.DelBlackResp, err error) {
+	var _args DelBlackArgs
+	_args.Req = Req
+	var _result DelBlackResult
+	if err = p.c.Call(ctx, "DelBlack", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetUserRelationship(ctx context.Context, Req *user.GetUserRelationshipReq) (r *user.GetUserRelationshipResp, err error) {
+	var _args GetUserRelationshipArgs
+	_args.Req = Req
+	var _result GetUserRelationshipResult
+	if err = p.c.Call(ctx, "GetUserRelationship", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

@@ -1,6 +1,6 @@
 kitex:
   service: "filerpc"
-  address: ":28889"
+  address: "192.168.56.1:28889"
   log:
     log_level: debug
     log_file_name: "log/kitex.log"

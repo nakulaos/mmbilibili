@@ -94,7 +94,7 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
                 const batch = currentBatch.map(async (chunkIndex) => {
                     await uploadSingleChunk(chunkIndex); // 上传单个块
                     progressCnt += 1;
-                    file.percent = (progressCnt / totalChunks) * 100;
+                    file.percent = ((progressCnt / totalChunks) * 100>95?95:(progressCnt / totalChunks) * 100).toFixed(2);
                     setFileList([...fileList, file]);
                 });
 
@@ -174,6 +174,7 @@ export const FileUploader:React.FC<FileUploaderProps>  = ({FileType})=>{
         }finally {
             setUploading(false);
             file.status = 'done';
+            file.percent = 100;
             setFileList([...fileList, file]);
         }
 

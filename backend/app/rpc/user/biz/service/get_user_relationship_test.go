@@ -6,12 +6,12 @@ import (
 	"testing"
 )
 
-func TestFollowUser_Run(t *testing.T) {
+func TestGetUserRelationship_Run(t *testing.T) {
 	ctx := context.Background()
-	s := NewFollowUserService(ctx)
+	s := NewGetUserRelationshipService(ctx)
 	// init req and assert value
 
-	req := &user.FollowUserReq{}
+	req := &user.GetUserRelationshipReq{}
 	resp, err := s.Run(req)
 	t.Logf("err: %v", err)
 	t.Logf("resp: %v", resp)

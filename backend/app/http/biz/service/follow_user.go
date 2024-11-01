@@ -1,6 +1,10 @@
 package service
 
 import (
+	"backend/app/common/constant"
+	"backend/app/http/biz/global"
+	userRpc "backend/app/rpc/user/kitex_gen/user"
+	"backend/library/tools"
 	"context"
 
 	user "backend/app/http/hertz_gen/user"
@@ -17,10 +21,21 @@ func NewFollowUserService(Context context.Context, RequestContext *app.RequestCo
 }
 
 func (h *FollowUserService) Run(req *user.FollowUserReq) (resp *user.FollowUserResp, err error) {
-	//defer func() {
-	// hlog.CtxInfof(h.Context, "req = %+v", req)
-	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	//}()
-	// todo edit your code
-	return
+	uid := tools.GetUserID(h.RequestContext)
+	rid := req.UserID
+	action := req.Action
+
+	if action == constant.FollowAction {
+		_, err = global.UserRpcClient.AddFollowing(h.Context, &userRpc.AddFollowingReq{
+			Uid: uid,
+			Rid: rid,
+		})
+	} else {
+		_, err = global.UserRpcClient.DelFollowing(h.Context, &userRpc.DelFollowingReq{
+			Uid: uid,
+			Rid: rid,
+		})
+	}
+
+	return &user.FollowUserResp{}, err
 }

@@ -1,10 +1,8 @@
 import axios from 'axios';
 import { store } from '@/store/store';
-import { clearAccessToken, clearToken, clearUserInfo, setAccessToken, setRefreshToken } from '@/store/userInfo'
-import { message } from 'antd';
+import { clearAccessToken } from '@/store/userInfo'
 import { getIntl } from '@/locales';
-import { AuthorizationErrorKey, ServerErrorKey } from '@/locales/locale';
-import { refreshToken, refreshToken as refreshTokenApi } from '@/api/userApi'
+import {  ServerErrorKey } from '@/locales/locale';
 import { addRequest, RefreshTokenAtUtility } from '@/utility/refresh'
 
 // 创建 Axios 实例
@@ -15,8 +13,6 @@ const myAxios = axios.create({
     baseURL: uri,
     timeout: 10000,
 });
-
-RefreshTokenAtUtility();
 
 // 请求拦截器：添加访问令牌
 myAxios.interceptors.request.use(

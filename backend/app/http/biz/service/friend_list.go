@@ -1,6 +1,9 @@
 package service
 
 import (
+	"backend/app/http/biz/global"
+	userRpc "backend/app/rpc/user/kitex_gen/user"
+	"backend/library/tools"
 	"context"
 
 	user "backend/app/http/hertz_gen/user"
@@ -17,10 +20,39 @@ func NewFriendListService(Context context.Context, RequestContext *app.RequestCo
 }
 
 func (h *FriendListService) Run(req *user.FriendListReq) (resp *user.FriendListResp, err error) {
-	//defer func() {
-	// hlog.CtxInfof(h.Context, "req = %+v", req)
-	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	//}()
-	// todo edit your code
-	return
+	var (
+		uid      = tools.GetUserID(h.RequestContext)
+		page     = req.Page
+		pageSize = req.PageSize
+		total    = req.Total
+	)
+
+	friendListResp, err := global.UserRpcClient.FriendList(h.Context, &userRpc.FriendListReq{
+		ActionId: uid,
+		Page:     page,
+		PageSize: pageSize,
+		Total:    total,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp = &user.FriendListResp{}
+	resp.Total = friendListResp.Total
+	resp.List = make([]*user.User, 0)
+	for _, v := range friendListResp.List {
+		userInfo := &user.User{
+			Id:       v.Id,
+			Username: v.Username,
+			Nickname: v.Nickname,
+			Avatar:   v.Avatar,
+			Status:   int64(v.Status),
+			Role:     int64(v.Role),
+			Gender:   int64(v.Gender),
+		}
+		resp.List = append(resp.List, userInfo)
+	}
+
+	return resp, nil
 }

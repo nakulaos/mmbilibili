@@ -66,4 +66,61 @@ var (
 		ID:    "UserRoleNotAllowError",
 		Other: "The http role right is not allowed",
 	})
+
+	// relation
+
+	UserNotFollowingSelfError *xerror.XError = xerror.NewXError(200014, i18n.Message{
+		ID:    "UserNotFollowingSelfError",
+		Other: "The user can't following self",
+	})
+
+	UserBlackUserError *xerror.XError = xerror.NewXError(200015, i18n.Message{
+		ID:    "UserBlackUserError",
+		Other: "The user is black user",
+	})
+
+	UserAlreadyFollowingError *xerror.XError = xerror.NewXError(200016, i18n.Message{
+		ID:    "UserAlreadyFollowingError",
+		Other: "The user is already following",
+	})
+
+	UserAlreadyBlackError *xerror.XError = xerror.NewXError(200017, i18n.Message{
+		ID:    "UserAlreadyBlackError",
+		Other: "The user is already black",
+	})
+
+	UserAlreadyFriendError *xerror.XError = xerror.NewXError(200018, i18n.Message{
+		ID:    "UserAlreadyFriendError",
+		Other: "The user is already friend",
+	})
+
+	UserAlreadyWhisperError *xerror.XError = xerror.NewXError(200019, i18n.Message{
+		ID:    "UserAlreadyWhisperError",
+		Other: "The user is already whisper",
+	})
+
+	UserAlreadyNotFollowingError *xerror.XError = xerror.NewXError(200020, i18n.Message{
+		ID:    "UserAlreadyNotFollowingError",
+		Other: "The user is already not following",
+	})
+
+	UserAlreadyNotBlackError *xerror.XError = xerror.NewXError(200021, i18n.Message{
+		ID:    "UserAlreadyNotBlackError",
+		Other: "The user is already not black",
+	})
+
+	UserAlreadyNotFriendError *xerror.XError = xerror.NewXError(200022, i18n.Message{
+		ID:    "UserAlreadyNotFriendError",
+		Other: "The user is already not friend",
+	})
+
+	UserAlreadyNotWhisperError *xerror.XError = xerror.NewXError(200023, i18n.Message{
+		ID:    "UserAlreadyNotWhisperError",
+		Other: "The user is already not whisper",
+	})
+
+	UserFollowingMaxError *xerror.XError = xerror.NewXError(200024, i18n.Message{
+		ID:    "UserFollowingMaxError",
+		Other: "The user following max",
+	})
 )

@@ -83,3 +83,13 @@ func getUserRelevantCountByID(ctx context.Context, db *gorm.DB, id int64) (*mode
 	err := db.WithContext(ctx).Where("user_id = ?", id).First(userRelevantCount).Error
 	return userRelevantCount, err
 }
+
+func getUserRelation(ctx context.Context, db *gorm.DB, uid, rid int64) (*model.UserRelationship, error) {
+	userRelation := &model.UserRelationship{}
+	err := db.WithContext(ctx).Where("user_id = ? and related_user_id", uid, rid).First(userRelation).Error
+	return userRelation, err
+}
+
+func createUserRelation(ctx context.Context, db *gorm.DB, relation *model.UserRelationship) error {
+	return db.WithContext(ctx).Create(relation).Error
+}
