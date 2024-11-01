@@ -8,3 +8,7 @@ const (
 	Remote = "remote"
 	Query  = "query"
 )
+
+const (
+	Shards int64 = 1000
+)

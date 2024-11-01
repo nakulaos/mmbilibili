@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/golang/groupcache/singleflight"
 	cache "github.com/mgtv-tech/jetcache-go"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
@@ -22,7 +23,20 @@ type UserDalImpl struct {
 	userByIdCache              *cache.T[int64, *model.User]
 	userRelevantCountByIdCache *cache.T[int64, *model.UserRelevantCount]
 	redis                      redis.UniversalClient
+	sg                         singleflight.Group
 }
+
+func NewUserDalImpl(c cache.Cache, db *gorm.DB, r redis.UniversalClient) *UserDalImpl {
+	return &UserDalImpl{
+		cache:                      c,
+		db:                         db,
+		userByIdCache:              cache.NewT[int64, *model.User](c),
+		redis:                      r,
+		userRelevantCountByIdCache: cache.NewT[int64, *model.UserRelevantCount](c),
+	}
+}
+
+// user
 
 func (s *UserDalImpl) AddTokenToBlackList(ctx context.Context, token string) error {
 	key := fmt.Sprintf("%s:%s", constant.UserTokenBlackListKey, token)
@@ -84,16 +98,6 @@ func (s *UserDalImpl) ExistUserByUserName(ctx context.Context, name string) (boo
 		return false, err
 	} else {
 		return f, nil
-	}
-}
-
-func NewUserDalImpl(c cache.Cache, db *gorm.DB, r redis.UniversalClient) *UserDalImpl {
-	return &UserDalImpl{
-		cache:                      c,
-		db:                         db,
-		userByIdCache:              cache.NewT[int64, *model.User](c),
-		redis:                      r,
-		userRelevantCountByIdCache: cache.NewT[int64, *model.UserRelevantCount](c),
 	}
 }
 
@@ -245,87 +249,6 @@ func (s *UserDalImpl) GetUsersByIDs(ctx context.Context, ids []int64) (map[int64
 	return user, nil
 }
 
-func (s *UserDalImpl) GetFollowersByUserID(ctx context.Context, userID int64, total, offset int) (map[int64]*model.User, error) {
-
-	//err := s.db.WithContext(ctx).Preload("Followers", func(db *gorm.DB) *gorm.DB {
-	//	return db.Select("users.id, users.username, users.nickname").Limit(total).Offset(offset)
-	//}).First(&model.User{}, "id = ?", userID).Error
-	var followerIDs []int64
-
-	err := s.db.WithContext(ctx).Raw(`
-        SELECT follower_id 
-        FROM user_follows 
-        WHERE followed_id = ? 
-        LIMIT ? OFFSET ?`, userID, total, offset).Scan(&followerIDs).Error
-
-	if err != nil {
-		return nil, err
-	}
-
-	ret := s.userByIdCache.MGet(ctx, constant.UserDetailCacheFromUidKey, followerIDs, func(ctx context.Context, ids []int64) (map[int64]*model.User, error) {
-		return s.GetUsersByIDs(ctx, ids)
-	})
-	return ret, nil
-}
-
-func (s *UserDalImpl) GetFollowingsByUserID(ctx context.Context, userID int64, total, offset int) (map[int64]*model.User, error) {
-	var followingIDs []int64
-
-	err := s.db.WithContext(ctx).Raw(`
-        SELECT followed_id 
-        FROM user_follows 
-        WHERE follower_id = ? 
-        LIMIT ? OFFSET ?`, userID, total, offset).Scan(&followingIDs).Error
-
-	if err != nil {
-		return nil, err
-	}
-
-	ret := s.userByIdCache.MGet(ctx, constant.UserDetailCacheFromUidKey, followingIDs, func(ctx context.Context, ids []int64) (map[int64]*model.User, error) {
-		return s.GetUsersByIDs(ctx, ids)
-	})
-
-	return ret, nil
-}
-
-func (s *UserDalImpl) GetFriendsByUserID(ctx context.Context, userID int64, total, offset int) (map[int64]*model.User, error) {
-	var followingIDs []int64
-
-	// 第一步：获取用户关注的人的ID
-	err := s.db.WithContext(ctx).Raw(`
-        SELECT followed_id 
-        FROM user_follows 
-        WHERE follower_id = ?
-        LIMIT ? OFFSET ?`, userID, total, offset).Scan(&followingIDs).Error
-
-	if err != nil {
-		return nil, err
-	}
-
-	if len(followingIDs) == 0 {
-		return make(map[int64]*model.User), nil // 如果没有关注的人，直接返回空结果
-	}
-
-	var friendIDs []int64
-
-	// 第二步：从关注的用户中查找哪些用户也关注了当前用户
-	err = s.db.WithContext(ctx).Raw(`
-        SELECT follower_id 
-        FROM user_follows 
-        WHERE followed_id = ? AND follower_id IN (?)`, userID, followingIDs).Scan(&friendIDs).Error
-
-	if err != nil {
-		return nil, err
-	}
-
-	// 使用缓存机制获取用户详细信息
-	ret := s.userByIdCache.MGet(ctx, constant.UserDetailCacheFromUidKey, friendIDs, func(ctx context.Context, ids []int64) (map[int64]*model.User, error) {
-		return s.GetUsersByIDs(ctx, ids)
-	})
-
-	return ret, nil
-}
-
 func (s *UserDalImpl) GetUserByUserName(ctx context.Context, userName string) (*model.User, error) {
 	var user *model.User
 	var (
@@ -404,4 +327,273 @@ func (s *UserDalImpl) delayedDoubleDelete(cacheKey string, maxRetries int, initi
 		delay *= 2
 	}
 	klog.Errorf("Exceeded maximum retries (%d) for deleting cache key %s", maxRetries, cacheKey)
+}
+
+// relation
+
+func (s *UserDalImpl) GetOrCreateMidFidRelation(ctx context.Context, mid, rid int64) (*model.UserRelationship, error) {
+	var (
+		userRelation = &model.UserRelationship{
+			UserID:        mid,
+			RelatedUserID: rid,
+		}
+		err error
+	)
+	if userRelation, err = getUserRelation(ctx, s.db, mid, rid); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			if err = createUserRelation(ctx, s.db, &model.UserRelationship{
+				UserID:        mid,
+				RelatedUserID: rid,
+			}); err != nil {
+				metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+				klog.Errorf("db.createUserRelation(%d, %d) failed, err:%v", mid, rid, err)
+				return nil, err
+			}
+		} else {
+			metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+			klog.Errorf("db.getUserRelation(%d, %d) failed, err:%v", mid, rid, err)
+			return nil, err
+		}
+	}
+
+	return userRelation, nil
+}
+
+func (s *UserDalImpl) UpdateFriendRelation(ctx context.Context, mid, rid int64, maxCount int64) error {
+	if err := s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.WithContext(ctx).Model(&model.UserRelationship{}).
+			Where("user_id = ? and related_user_id = ?", mid, rid).
+			Update("relationship_attr", model.RelationshipAttrFriend).Error; err != nil {
+			metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+			klog.Errorf("db.update(%d, %d ,%d) failed, err:%v", mid, rid, model.RelationshipAttrFriend, err)
+			return err
+		}
+
+		if err := tx.WithContext(ctx).Model(&model.UserRelationship{}).
+			Where("user_id = ? and related_user_id = ?", rid, mid).
+			Update("relationship_attr", model.RelationshipAttrFriend).Error; err != nil {
+			metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+			klog.Errorf("db.update(%d, %d ,%d) failed, err:%v", rid, mid, model.RelationshipAttrFriend, err)
+			return err
+		}
+
+		return nil
+
+	}); err != nil {
+		metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+		klog.Errorf("db.createUserRelation(%d, %d) failed, err:%v", mid, rid, err)
+		return err
+	}
+
+	go func() {
+		for retries := 0; retries < 3; retries++ {
+			if err := delAllUserRelationshipCache(s.redis, ctx, mid, maxCount); err != nil {
+				metric.IncrGauge(metric.LibClient, constant.PromRedisUserRelation)
+				klog.Errorf("delUserRelationshipCache(%d) failed, err:%v, retrying %d/%d", mid, err, retries+1, 3)
+				continue
+			}
+			break
+		}
+
+		for retries := 0; retries < 3; retries++ {
+			if err := delAllUserRelationshipCache(s.redis, ctx, rid, maxCount); err != nil {
+				metric.IncrGauge(metric.LibClient, constant.PromRedisUserRelation)
+				klog.Errorf("delUserRelationshipCache(%d) failed, err:%v, retrying %d/%d", rid, err, retries+1, 3)
+				continue
+			}
+			break
+		}
+	}()
+
+	return nil
+}
+
+func (s *UserDalImpl) RemoveFriendRelation(ctx context.Context, mid, fid int64, maxCount int64) error {
+	if err := s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.WithContext(ctx).Model(&model.UserRelationship{}).Where("user_id = ? and related_user_id = ?", mid, fid).
+			Update("relationship_attr", model.RelationshipAttrNone).Error; err != nil {
+			metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+			klog.Errorf("db.update(%d, %d ,%d) failed, err:%v", fid, mid, model.RelationshipAttrFollowing)
+			return err
+		}
+		if err := tx.WithContext(ctx).Model(&model.UserRelationship{}).Where("user_id = ? and related_user_id = ?", fid, mid).
+			Update("relationship_attr", model.RelationshipAttrFollowing).Error; err != nil {
+			metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+			klog.Errorf("db.update(%d, %d ,%d) failed, err:%v", fid, mid, model.RelationshipAttrFollowing)
+			return err
+		}
+		return nil
+	}); err != nil {
+		metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+		klog.Errorf("db.createUserRelation(%d, %d) failed, err:%v", mid, fid, err)
+		return err
+	}
+
+	go func() {
+		for retries := 0; retries < 3; retries++ {
+			if err := delAllUserRelationshipCache(s.redis, ctx, mid, maxCount); err != nil {
+				metric.IncrGauge(metric.LibClient, constant.PromRedisUserRelation)
+				klog.Errorf("delUserRelationshipCache(%d) failed, err:%v, retrying %d/%d", mid, err, retries+1, 3)
+				continue
+			}
+			break
+		}
+
+		for retries := 0; retries < 3; retries++ {
+			if err := delAllUserRelationshipCache(s.redis, ctx, fid, maxCount); err != nil {
+				metric.IncrGauge(metric.LibClient, constant.PromRedisUserRelation)
+				klog.Errorf("delUserRelationshipCache(%d) failed, err:%v, retrying %d/%d", fid, err, retries+1, 3)
+				continue
+			}
+			break
+		}
+	}()
+	return nil
+}
+
+func (s *UserDalImpl) UpdateMidRelation(ctx context.Context, mid int64, rid, attr int64, maxCount int64) error {
+	if err := s.db.WithContext(ctx).Model(&model.UserRelationship{}).
+		Where("user_id = ? and related_user_id = ?", mid, rid).
+		Update("relationship_attr", attr).Error; err != nil {
+		metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+		klog.Errorf("db.update(%d, %d ,%d) failed, err:%v", rid, mid, attr, err)
+		return err
+	}
+
+	// 更新缓存
+	go func() {
+		if err := delAllUserRelationshipCache(s.redis, ctx, mid, maxCount); err != nil {
+			metric.IncrGauge(metric.LibClient, constant.PromRedisUserRelation)
+			klog.Errorf("delUserRelationshipCache(%d) failed, err:%v", mid, err)
+		}
+	}()
+	return nil
+}
+
+func (s *UserDalImpl) GetFollowersByUserID(ctx context.Context, userID int64, total, offset int64) (map[int64]*model.User, error) {
+	var followerIDs []int64
+	if err := s.db.WithContext(ctx).Model(&model.UserRelationship{}).
+		Where("related_user_id = ? and relationship_attr = ?", userID, model.RelationshipAttrFollowing).
+		Offset(int(offset)).Limit(int(total)).Select("user_id").Find(&followerIDs).Error; err != nil {
+		metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+		klog.Errorf("db.find(%d) failed, err:%v", userID, err)
+		return nil, err
+	}
+
+	if ret, err := s.GetUsersByIDs(ctx, followerIDs); err != nil {
+		return nil, err
+	} else {
+		return ret, nil
+	}
+}
+
+func (s *UserDalImpl) GetFollowingsByUserID(ctx context.Context, userID int64, total, offset int64) (map[int64]*model.User, error) {
+	var followingIDs []int64
+	if err := s.db.WithContext(ctx).Model(&model.UserRelationship{}).
+		Where("user_id = ? and relationship_attr = ?", userID, model.RelationshipAttrFollowing).
+		Offset(int(offset)).Limit(int(total)).Select("related_user_id").Find(&followingIDs).Error; err != nil {
+		return nil, err
+	}
+
+	if ret, err := s.GetUsersByIDs(ctx, followingIDs); err != nil {
+		metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+		klog.Errorf("db.GetUsersByIDs(%v) failed, err:%v", followingIDs, err)
+		return nil, err
+	} else {
+		return ret, nil
+	}
+}
+
+func (s *UserDalImpl) GetFriendsByUserID(ctx context.Context, userID int64, total, offset int64) (map[int64]*model.User, error) {
+	var friendIDs []int64
+	if err := s.db.WithContext(ctx).Model(&model.UserRelationship{}).
+		Where("user_id = ? and relationship_attr = ?", userID, model.RelationshipAttrFriend).
+		Offset(int(offset)).Limit(int(total)).Select("related_user_id").Find(&friendIDs).Error; err != nil {
+		return nil, err
+	}
+
+	if ret, err := s.GetUsersByIDs(ctx, friendIDs); err != nil {
+		return nil, err
+	} else {
+		return ret, nil
+	}
+}
+
+func (s *UserDalImpl) GetBlanksByUserID(ctx context.Context, userID int64, total, offset int64) (map[int64]*model.User, error) {
+	var blankIDs []int64
+	if err := s.db.WithContext(ctx).Model(&model.UserRelationship{}).
+		Where("user_id = ? and relationship_attr = ?", userID, model.RelationshipAttrBlack).
+		Offset(int(offset)).Limit(int(total)).Select("related_user_id").Find(&blankIDs).Error; err != nil {
+		metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+		klog.Errorf("db.find(%d) failed, err:%v", userID, err)
+		return nil, err
+	}
+
+	if ret, err := s.GetUsersByIDs(ctx, blankIDs); err != nil {
+		return nil, err
+	} else {
+		return ret, nil
+	}
+}
+
+func (s *UserDalImpl) GetWhispersByUserID(ctx context.Context, userID int64, total, offset int64) (map[int64]*model.User, error) {
+	var whisperIDs []int64
+	if err := s.db.WithContext(ctx).Model(&model.UserRelationship{}).
+		Where("user_id = ? and relationship_attr = ?", userID, model.RelationshipAttrWhisper).
+		Offset(int(offset)).Limit(int(total)).Select("related_user_id").Find(&whisperIDs).Error; err != nil {
+		metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+		klog.Errorf("db.find(%d) failed, err:%v", userID, err)
+		return nil, err
+	}
+
+	if ret, err := s.GetUsersByIDs(ctx, whisperIDs); err != nil {
+		return nil, err
+	} else {
+		return ret, nil
+	}
+}
+
+func (s *UserDalImpl) GetAttrsByUIDAndRIDS(ctx context.Context, userID int64, rids []int64, maxCount int64, expire time.Duration) (map[int64]*model.UserRelationship, error) {
+	var (
+		redisExist bool
+		err        error
+	)
+
+	redisExist, err = existUserRelationshipCache(s.redis, ctx, userID, maxCount, expire)
+	if err != nil {
+		metric.IncrGauge(metric.LibClient, constant.PromRedisUserRelation)
+		klog.Errorf("existUserRelationshipCache(%d) failed, err:%v", userID, err)
+		err = nil
+	}
+
+	if redisExist {
+		return getUserRelationshipCache(s.redis, ctx, userID, rids, maxCount)
+	}
+
+	v, err := s.sg.Do(fmt.Sprintf("user_relationship_%d", userID), func() (interface{}, error) {
+		var relationshipsArray []*model.UserRelationship
+		if err := s.db.WithContext(ctx).Model(&model.UserRelationship{}).
+			Where("user_id = ?", userID).Find(&relationshipsArray).Error; err != nil {
+			metric.IncrGauge(metric.LibClient, constant.PromDBUserRelation)
+			klog.Errorf("db.find(%d) failed, err:%v", userID, err)
+			return nil, err
+		}
+
+		relationships := make(map[int64]*model.UserRelationship, len(relationshipsArray))
+		for _, relation := range relationshipsArray {
+			relationships[relation.RelatedUserID] = relation
+		}
+
+		go func() {
+			setUserRelationshipCache(s.redis, ctx, userID, relationships, maxCount, expire)
+		}()
+
+		return relationships, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return v.(map[int64]*model.UserRelationship), nil
 }

@@ -17,12 +17,17 @@ type Client interface {
 	Register(ctx context.Context, Req *user.RegisterReq, callOptions ...callopt.Option) (r *user.LoginResp, err error)
 	UpdateUserInfo(ctx context.Context, Req *user.UpdateUserInfoReq, callOptions ...callopt.Option) (r *user.UpdateUserInfoResp, err error)
 	Logout(ctx context.Context, Req *user.LogoutReq, callOptions ...callopt.Option) (r *user.LogoutResp, err error)
-	FollowUser(ctx context.Context, Req *user.FollowUserReq, callOptions ...callopt.Option) (r *user.FollowUserResp, err error)
 	FollowerList(ctx context.Context, Req *user.FollowerListReq, callOptions ...callopt.Option) (r *user.FollowerListResp, err error)
 	FollowingList(ctx context.Context, Req *user.FollowingListReq, callOptions ...callopt.Option) (r *user.FollowingListResp, err error)
 	FriendList(ctx context.Context, Req *user.FriendListReq, callOptions ...callopt.Option) (r *user.FriendListResp, err error)
-	UserUploadFile(ctx context.Context, Req *user.UserUploadFileReq, callOptions ...callopt.Option) (r *user.UserUploadFileResp, err error)
 	RefreshToken(ctx context.Context, Req *user.RefreshTokenReq, callOptions ...callopt.Option) (r *user.RefreshTokenResp, err error)
+	AddFollowing(ctx context.Context, Req *user.AddFollowingReq, callOptions ...callopt.Option) (r *user.AddFollowingResp, err error)
+	AddWhisper(ctx context.Context, Req *user.AddWhisperReq, callOptions ...callopt.Option) (r *user.AddWhisperResp, err error)
+	AddBlack(ctx context.Context, Req *user.AddBlackReq, callOptions ...callopt.Option) (r *user.AddBlackResp, err error)
+	DelFollowing(ctx context.Context, Req *user.DelFollowingReq, callOptions ...callopt.Option) (r *user.DelFollowingResp, err error)
+	DelWhisper(ctx context.Context, Req *user.DelWhisperReq, callOptions ...callopt.Option) (r *user.DelWhisperResp, err error)
+	DelBlack(ctx context.Context, Req *user.DelBlackReq, callOptions ...callopt.Option) (r *user.DelBlackResp, err error)
+	GetUserRelationship(ctx context.Context, Req *user.GetUserRelationshipReq, callOptions ...callopt.Option) (r *user.GetUserRelationshipResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -84,11 +89,6 @@ func (p *kUserRpcServiceClient) Logout(ctx context.Context, Req *user.LogoutReq,
 	return p.kClient.Logout(ctx, Req)
 }
 
-func (p *kUserRpcServiceClient) FollowUser(ctx context.Context, Req *user.FollowUserReq, callOptions ...callopt.Option) (r *user.FollowUserResp, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.FollowUser(ctx, Req)
-}
-
 func (p *kUserRpcServiceClient) FollowerList(ctx context.Context, Req *user.FollowerListReq, callOptions ...callopt.Option) (r *user.FollowerListResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.FollowerList(ctx, Req)
@@ -104,12 +104,42 @@ func (p *kUserRpcServiceClient) FriendList(ctx context.Context, Req *user.Friend
 	return p.kClient.FriendList(ctx, Req)
 }
 
-func (p *kUserRpcServiceClient) UserUploadFile(ctx context.Context, Req *user.UserUploadFileReq, callOptions ...callopt.Option) (r *user.UserUploadFileResp, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UserUploadFile(ctx, Req)
-}
-
 func (p *kUserRpcServiceClient) RefreshToken(ctx context.Context, Req *user.RefreshTokenReq, callOptions ...callopt.Option) (r *user.RefreshTokenResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.RefreshToken(ctx, Req)
+}
+
+func (p *kUserRpcServiceClient) AddFollowing(ctx context.Context, Req *user.AddFollowingReq, callOptions ...callopt.Option) (r *user.AddFollowingResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.AddFollowing(ctx, Req)
+}
+
+func (p *kUserRpcServiceClient) AddWhisper(ctx context.Context, Req *user.AddWhisperReq, callOptions ...callopt.Option) (r *user.AddWhisperResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.AddWhisper(ctx, Req)
+}
+
+func (p *kUserRpcServiceClient) AddBlack(ctx context.Context, Req *user.AddBlackReq, callOptions ...callopt.Option) (r *user.AddBlackResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.AddBlack(ctx, Req)
+}
+
+func (p *kUserRpcServiceClient) DelFollowing(ctx context.Context, Req *user.DelFollowingReq, callOptions ...callopt.Option) (r *user.DelFollowingResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DelFollowing(ctx, Req)
+}
+
+func (p *kUserRpcServiceClient) DelWhisper(ctx context.Context, Req *user.DelWhisperReq, callOptions ...callopt.Option) (r *user.DelWhisperResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DelWhisper(ctx, Req)
+}
+
+func (p *kUserRpcServiceClient) DelBlack(ctx context.Context, Req *user.DelBlackReq, callOptions ...callopt.Option) (r *user.DelBlackResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DelBlack(ctx, Req)
+}
+
+func (p *kUserRpcServiceClient) GetUserRelationship(ctx context.Context, Req *user.GetUserRelationshipReq, callOptions ...callopt.Option) (r *user.GetUserRelationshipResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetUserRelationship(ctx, Req)
 }

@@ -1,6 +1,6 @@
 kitex:
   service: "userrpc"
-  address: ":28888"
+  address: "192.168.56.1:28888"
   log:
     log_level: debug
     log_file_name: "log/kitex.log"
@@ -44,9 +44,40 @@ app:
   refresh_token_expire: 10080 #min
   access_token_secret: asdasd
   refresh_token_secret: asdasdasdasd
-
+  following_max_count: 1000
+  following_expire: 30 #min
 mysql:
   dsn: "root:asdasd@tcp(127.0.0.1:13306)/mmbilibili?charset=utf8mb4&parseTime=True&loc=Local"
   max_open_conns: 8
   max_idle_conns: 4
   conn_max_idle_time: 240 #min
+
+user_relation_kafka_writer:
+  brokers:
+    - "localhost:9092"
+  topic: "user_relation"
+  enable_local_order: true
+  max_attempts: 10
+  batch_size: 100
+  batch_timeout: 1000  # 以毫秒为单位
+  batch_bytes: 1048576  # 以字节为单位（1 MB）
+  read_timeout: 10000  # 以毫秒为单位
+  write_timeout: 10000  # 以毫秒为单位
+  enable_async: false
+  required_acks: 1  # 等待所有副本确认
+  allow_auto_create_topic: true
+
+user_relevant_count_writer:
+  brokers:
+    - "localhost:9092"
+  topic: "user_relation"
+  enable_local_order: true
+  max_attempts: 10
+  batch_size: 100
+  batch_timeout: 1000  # 以毫秒为单位
+  batch_bytes: 1048576  # 以字节为单位（1 MB）
+  read_timeout: 10000  # 以毫秒为单位
+  write_timeout: 10000  # 以毫秒为单位
+  enable_async: false
+  required_acks: 1  # 等待所有副本确认
+  allow_auto_create_topic: true

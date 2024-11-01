@@ -19,6 +19,12 @@ var (
 	UserDetailCacheFromUsernameKey string = AppName + "User:Detail:Username"
 	UserRelevantCountFromIdKey     string = AppName + "User:RelevantCount:Uid"
 	UserTokenBlackListKey          string = AppName + "User:TokenBlackList:Token"
+	UserRelationshipKey            string = AppName + "User:Relationship:Uid" // 用户关系,%d 是分片值，会进行一个打散处理
+)
+
+// lock
+var (
+	LockUserRelation string = AppName + "User:Relation:Lock:Uid"
 )
 
 var (

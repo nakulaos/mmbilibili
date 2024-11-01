@@ -6,12 +6,12 @@ import (
 	"testing"
 )
 
-func TestUserUploadFile_Run(t *testing.T) {
+func TestAddBlack_Run(t *testing.T) {
 	ctx := context.Background()
-	s := NewUserUploadFileService(ctx)
+	s := NewAddBlackService(ctx)
 	// init req and assert value
 
-	req := &user.UserUploadFileReq{}
+	req := &user.AddBlackReq{}
 	resp, err := s.Run(req)
 	t.Logf("err: %v", err)
 	t.Logf("resp: %v", resp)

@@ -72,6 +72,7 @@ struct FollowUserReq {
 struct FollowerListReq {
     1: i64 Page (api.body = "page,required" api.vd="$>=1")               // 页码
     2: i64 PageSize (api.body = "page_size,required" api.vd="$>=1")      // 每页大小
+    3: i64 Total (api.body = "total")
 }
 
 // 粉丝列表响应
@@ -84,6 +85,7 @@ struct FollowerListResp {
 struct FollowingListReq {
     1: i64 Page (api.body = "page,required" api.vd="$>=1")                // 页码
     2: i64 PageSize (api.body = "page_size,required" api.vd="$>=1")       // 每页大小
+    3: i64 Total (api.body = "total")
 }
 
 // 关注列表响应
@@ -96,6 +98,7 @@ struct FollowingListResp {
 struct FriendListReq {
     1: i64 Page (api.body = "page,required" api.vd="$>=1")                // 页码
     2: i64 PageSize (api.body = "page_size,required" api.vd="$>=1")       // 每页大小
+    3: i64 Total (api.body = "total")
 }
 
 // 好友列表响应

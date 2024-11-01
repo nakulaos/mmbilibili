@@ -51,13 +51,6 @@ func (s *UserRpcServiceImpl) Logout(ctx context.Context, req *user.LogoutReq) (r
 	return resp, err
 }
 
-// FollowUser implements the UserRpcServiceImpl interface.
-func (s *UserRpcServiceImpl) FollowUser(ctx context.Context, req *user.FollowUserReq) (resp *user.FollowUserResp, err error) {
-	resp, err = service.NewFollowUserService(ctx).Run(req)
-
-	return resp, err
-}
-
 // FollowerList implements the UserRpcServiceImpl interface.
 func (s *UserRpcServiceImpl) FollowerList(ctx context.Context, req *user.FollowerListReq) (resp *user.FollowerListResp, err error) {
 	resp, err = service.NewFollowerListService(ctx).Run(req)
@@ -79,16 +72,58 @@ func (s *UserRpcServiceImpl) FriendList(ctx context.Context, req *user.FriendLis
 	return resp, err
 }
 
-// UserUploadFile implements the UserRpcServiceImpl interface.
-func (s *UserRpcServiceImpl) UserUploadFile(ctx context.Context, req *user.UserUploadFileReq) (resp *user.UserUploadFileResp, err error) {
-	resp, err = service.NewUserUploadFileService(ctx).Run(req)
+// RefreshToken implements the UserRpcServiceImpl interface.
+func (s *UserRpcServiceImpl) RefreshToken(ctx context.Context, req *user.RefreshTokenReq) (resp *user.RefreshTokenResp, err error) {
+	resp, err = service.NewRefreshTokenService(ctx).Run(req)
 
 	return resp, err
 }
 
-// RefreshToken implements the UserRpcServiceImpl interface.
-func (s *UserRpcServiceImpl) RefreshToken(ctx context.Context, req *user.RefreshTokenReq) (resp *user.RefreshTokenResp, err error) {
-	resp, err = service.NewRefreshTokenService(ctx).Run(req)
+// AddFollowing implements the UserRpcServiceImpl interface.
+func (s *UserRpcServiceImpl) AddFollowing(ctx context.Context, req *user.AddFollowingReq) (resp *user.AddFollowingResp, err error) {
+	resp, err = service.NewAddFollowingService(ctx).Run(req)
+
+	return resp, err
+}
+
+// AddWhisper implements the UserRpcServiceImpl interface.
+func (s *UserRpcServiceImpl) AddWhisper(ctx context.Context, req *user.AddWhisperReq) (resp *user.AddWhisperResp, err error) {
+	resp, err = service.NewAddWhisperService(ctx).Run(req)
+
+	return resp, err
+}
+
+// AddBlack implements the UserRpcServiceImpl interface.
+func (s *UserRpcServiceImpl) AddBlack(ctx context.Context, req *user.AddBlackReq) (resp *user.AddBlackResp, err error) {
+	resp, err = service.NewAddBlackService(ctx).Run(req)
+
+	return resp, err
+}
+
+// DelFollowing implements the UserRpcServiceImpl interface.
+func (s *UserRpcServiceImpl) DelFollowing(ctx context.Context, req *user.DelFollowingReq) (resp *user.DelFollowingResp, err error) {
+	resp, err = service.NewDelFollowingService(ctx).Run(req)
+
+	return resp, err
+}
+
+// DelWhisper implements the UserRpcServiceImpl interface.
+func (s *UserRpcServiceImpl) DelWhisper(ctx context.Context, req *user.DelWhisperReq) (resp *user.DelWhisperResp, err error) {
+	resp, err = service.NewDelWhisperService(ctx).Run(req)
+
+	return resp, err
+}
+
+// DelBlack implements the UserRpcServiceImpl interface.
+func (s *UserRpcServiceImpl) DelBlack(ctx context.Context, req *user.DelBlackReq) (resp *user.DelBlackResp, err error) {
+	resp, err = service.NewDelBlackService(ctx).Run(req)
+
+	return resp, err
+}
+
+// GetUserRelationship implements the UserRpcServiceImpl interface.
+func (s *UserRpcServiceImpl) GetUserRelationship(ctx context.Context, req *user.GetUserRelationshipReq) (resp *user.GetUserRelationshipResp, err error) {
+	resp, err = service.NewGetUserRelationshipService(ctx).Run(req)
 
 	return resp, err
 }
