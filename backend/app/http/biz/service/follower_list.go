@@ -3,7 +3,6 @@ package service
 import (
 	"backend/app/http/biz/global"
 	userRpc "backend/app/rpc/user/kitex_gen/user"
-	"backend/library/tools"
 	"context"
 
 	user "backend/app/http/hertz_gen/user"
@@ -21,7 +20,7 @@ func NewFollowerListService(Context context.Context, RequestContext *app.Request
 
 func (h *FollowerListService) Run(req *user.FollowerListReq) (resp *user.FollowerListResp, err error) {
 	var (
-		uid      = tools.GetUserID(h.RequestContext)
+		uid      = req.ActionID
 		page     = req.Page
 		pageSize = req.PageSize
 		total    = req.Total

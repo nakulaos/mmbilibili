@@ -49,21 +49,70 @@ type UserRelevantCountMessage struct {
 func NewUserRelevantCountMessage(userID int64) *UserRelevantCountMessage {
 	return &UserRelevantCountMessage{
 		UserID:      userID,
-		CountChange: make(map[int8]int64),
+		CountChange: DefaultCountChange(),
+	}
+}
+
+func DefaultCountChange() map[int8]int64 {
+	return map[int8]int64{
+		TypeFollowerCount:  0,
+		TypeFollowingCount: 0,
+		TypeLikeCount:      0,
+		TypeStarCount:      0,
+		TypeSelfStarCount:  0,
+		TypeSelfLikeCount:  0,
+		TypeLiveCount:      0,
+		TypeWorkCount:      0,
+		TypeFriendCount:    0,
+		TypeBlackCount:     0,
+		TypeWhisperCount:   0,
+	}
+}
+
+func SwitchCountType(t int8) string {
+	switch t {
+	case TypeFollowerCount:
+		return "follower_count"
+	case TypeFollowingCount:
+		return "following_count"
+	case TypeLikeCount:
+		return "like_count"
+	case TypeStarCount:
+		return "star_count"
+	case TypeSelfStarCount:
+		return "self_star_count"
+	case TypeSelfLikeCount:
+		return "self_like_count"
+	case TypeLiveCount:
+		return "live_count"
+	case TypeWorkCount:
+		return "work_count"
+	case TypeFriendCount:
+		return "friend_count"
+	case TypeBlackCount:
+		return "black_count"
+	case TypeWhisperCount:
+		return "whisper_count"
+	default:
+		return ""
 	}
 }
 
 func (m *UserRelevantCountMessage) GetUserRelevantCountMessageKey() []byte {
-	key := []byte("user_relevant_count_message_")
+	key := []byte("user_relevant_count_message:")
 	key = strconv.AppendInt(key, m.UserID, 10)
 	return key
 }
-func (m *UserRelevantCountMessage) Json() []byte {
+func (m *UserRelevantCountMessage) Marshal() []byte {
 	jsonData, err := json.Marshal(m)
 	if err != nil {
 		return []byte{}
 	}
 	return jsonData
+}
+
+func (m *UserRelevantCountMessage) Unmarshal(data []byte) error {
+	return json.Unmarshal(data, m)
 }
 
 func (u *UserRelevantCount) TableName() string {
