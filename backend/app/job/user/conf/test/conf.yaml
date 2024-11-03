@@ -1,0 +1,20 @@
+user_relevant_count_service:
+  user_relevant_count_consumer:
+    brokers:
+      - "localhost:9093"
+    group_id: "user_relevant_count_monitor"
+    topic: "user_relevant_count"
+    start_offset: -1
+    min_bytes: 1
+    max_bytes: 1048576
+    max_wait_time: 1000
+    commit_interval: 5000
+    read_batch_timeout: 10000
+  user_relevant_count_mysql:
+    dsn: "root:asdasd@tcp(127.0.0.1:13306)/mmbilibili?charset=utf8mb4&parseTime=True&loc=Local"
+    max_open_conns: 8
+    max_idle_conns: 4
+    conn_max_idle_time: 240 #min
+  user_relevant_count_bulk_executor:
+    task_size: 150
+    flush_interval: 10000 # ms

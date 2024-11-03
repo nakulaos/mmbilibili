@@ -8,6 +8,7 @@ import (
 	"context"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/segmentio/kafka-go"
+	"strconv"
 	"time"
 )
 
@@ -39,6 +40,13 @@ func (s *DelFollowingService) Run(req *user.DelFollowingReq) (resp *user.DelFoll
 	if uid == rid {
 		klog.Errorf("addFollowingService Run uid == fid")
 		return nil, ecode.InvalidParamsError.WithTemplateData(map[string]string{"Params": "uid or fid"})
+	}
+
+	// 判断用户是否存在
+	if exist, err := global.UserDal.ExistUserByID(s.ctx, rid); err != nil {
+		return nil, ecode.ServerError
+	} else if !exist {
+		return nil, ecode.UserNotExistError.WithTemplateData(map[string]string{"UID": strconv.FormatInt(rid, 10)})
 	}
 
 	if ur, err = global.UserDal.GetOrCreateMidFidRelation(s.ctx, uid, rid); err != nil {
@@ -83,7 +91,7 @@ func (s *DelFollowingService) Run(req *user.DelFollowingReq) (resp *user.DelFoll
 			defer cancel()
 			if err = global.UserRelevantCountProducer.WriteMessages(ctx, kafka.Message{
 				Key:   umsg.GetUserRelevantCountMessageKey(),
-				Value: umsg.Json(),
+				Value: umsg.Marshal(),
 			}); err != nil {
 				klog.Errorf("global.UserRelevantCountProducer.WriteMessages(%d) err:%v", umsg.GetUserRelevantCountMessageKey(), err)
 				time.Sleep(1 * time.Second) // 可选：添加重试间隔
@@ -96,7 +104,7 @@ func (s *DelFollowingService) Run(req *user.DelFollowingReq) (resp *user.DelFoll
 			defer cancel()
 			if err = global.UserRelevantCountProducer.WriteMessages(ctx, kafka.Message{
 				Key:   rmsg.GetUserRelevantCountMessageKey(),
-				Value: rmsg.Json(),
+				Value: rmsg.Marshal(),
 			}); err != nil {
 				klog.Errorf("global.UserRelevantCountProducer.WriteMessages(%d) err:%v", umsg.GetUserRelevantCountMessageKey(), err)
 				time.Sleep(1 * time.Second)

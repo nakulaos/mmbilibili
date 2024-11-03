@@ -70,9 +70,10 @@ struct FollowUserReq {
 
 // 粉丝列表请求
 struct FollowerListReq {
-    1: i64 Page (api.body = "page,required" api.vd="$>=1")               // 页码
-    2: i64 PageSize (api.body = "page_size,required" api.vd="$>=1")      // 每页大小
-    3: i64 Total (api.body = "total")
+    1: i64 ActionID (api.body = "action_id,required" api.vd="$>=1")       // 动作ID
+    2: i64 Page (api.body = "page,required" api.vd="$>=1")                // 页码
+    3: i64 PageSize (api.body = "page_size,required" api.vd="$>=1")       // 每页大小
+    4: i64 Total (api.body = "total")
 }
 
 // 粉丝列表响应
@@ -83,9 +84,10 @@ struct FollowerListResp {
 
 // 关注列表请求
 struct FollowingListReq {
-    1: i64 Page (api.body = "page,required" api.vd="$>=1")                // 页码
-    2: i64 PageSize (api.body = "page_size,required" api.vd="$>=1")       // 每页大小
-    3: i64 Total (api.body = "total")
+    1: i64 ActionID (api.body = "action_id,required" api.vd="$>=1")       // 动作ID
+    2: i64 Page (api.body = "page,required" api.vd="$>=1")                // 页码
+    3: i64 PageSize (api.body = "page_size,required" api.vd="$>=1")       // 每页大小
+    4: i64 Total (api.body = "total")
 }
 
 // 关注列表响应
@@ -96,9 +98,10 @@ struct FollowingListResp {
 
 // 好友列表请求
 struct FriendListReq {
-    1: i64 Page (api.body = "page,required" api.vd="$>=1")                // 页码
-    2: i64 PageSize (api.body = "page_size,required" api.vd="$>=1")       // 每页大小
-    3: i64 Total (api.body = "total")
+    1: i64 ActionID (api.body = "action_id,required" api.vd="$>=1")       // 动作ID
+    2: i64 Page (api.body = "page,required" api.vd="$>=1")                // 页码
+    3: i64 PageSize (api.body = "page_size,required" api.vd="$>=1")       // 每页大小
+    4: i64 Total (api.body = "total")
 }
 
 // 好友列表响应

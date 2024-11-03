@@ -31,3 +31,18 @@ func SwitchBalancer(enableOrder bool) kafka.Balancer {
 		return &kafka.LeastBytes{}
 	}
 }
+
+func InitKafkaReader(c *globalConf.KafkaReader) *kafka.Reader {
+	reader := kafka.NewReader(kafka.ReaderConfig{
+		Brokers:          c.Brokers,
+		GroupID:          c.GroupID,
+		Topic:            c.Topic,
+		StartOffset:      c.StartOffset,
+		MinBytes:         c.MinBytes,
+		MaxBytes:         c.MaxBytes,
+		MaxWait:          time.Duration(c.MaxWaitTime) * time.Millisecond,
+		CommitInterval:   time.Duration(c.CommitInterval) * time.Millisecond,
+		ReadBatchTimeout: time.Duration(c.ReadBatchTimeout) * time.Millisecond,
+	})
+	return reader
+}

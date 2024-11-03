@@ -14,3 +14,15 @@ type KafkaWriter struct {
 	RequiredAcks         int      `yaml:"required_acks"`           // 0: 不等待broker确认，1: 等待leader确认，-1: 等待所有副本确认
 	AllowAutoCreateTopic bool     `yaml:"allow_auto_create_topic"` // 是否允许自动创建topic
 }
+
+type KafkaReader struct {
+	Brokers          []string `yaml:"brokers"`
+	GroupID          string   `yaml:"group_id"`
+	Topic            string   `yaml:"topic"`
+	StartOffset      int64    `yaml:"start_offset"`       // -1 latest, -2 first
+	MinBytes         int      `yaml:"min_bytes"`          // 最小读取字节数
+	MaxBytes         int      `yaml:"max_bytes"`          // 最大读取字节数
+	MaxWaitTime      int      `yaml:"max_wait_time"`      // 最大等待时间 ms
+	CommitInterval   int      `yaml:"commit_interval"`    // 提交时间间隔 ms
+	ReadBatchTimeout int      `yaml:"read_batch_timeout"` // 读取批量超时时间 ms
+}

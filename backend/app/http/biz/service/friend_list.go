@@ -3,7 +3,6 @@ package service
 import (
 	"backend/app/http/biz/global"
 	userRpc "backend/app/rpc/user/kitex_gen/user"
-	"backend/library/tools"
 	"context"
 
 	user "backend/app/http/hertz_gen/user"
@@ -21,7 +20,7 @@ func NewFriendListService(Context context.Context, RequestContext *app.RequestCo
 
 func (h *FriendListService) Run(req *user.FriendListReq) (resp *user.FriendListResp, err error) {
 	var (
-		uid      = tools.GetUserID(h.RequestContext)
+		uid      = req.ActionID
 		page     = req.Page
 		pageSize = req.PageSize
 		total    = req.Total

@@ -8,6 +8,7 @@ import (
 	"context"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/segmentio/kafka-go"
+	"strconv"
 	"time"
 )
 
@@ -44,7 +45,14 @@ func (s *AddFollowingService) Run(req *user.AddFollowingReq) (resp *user.AddFoll
 
 	if uid == rid {
 		klog.Errorf("addFollowingService Run uid == fid")
-		return nil, ecode.InvalidParamsError.WithTemplateData(map[string]string{"Params": "uid or fid"})
+		return nil, ecode.UserNotFollowingSelfError
+	}
+
+	// 判断用户是否存在
+	if exist, err := global.UserDal.ExistUserByID(s.ctx, rid); err != nil {
+		return nil, ecode.ServerError
+	} else if !exist {
+		return nil, ecode.UserNotExistError.WithTemplateData(map[string]string{"UID": strconv.FormatInt(rid, 10)})
 	}
 
 	if ur, err = global.UserDal.GetOrCreateMidFidRelation(s.ctx, uid, rid); err != nil {
@@ -64,8 +72,6 @@ func (s *AddFollowingService) Run(req *user.AddFollowingReq) (resp *user.AddFoll
 	switch rarrt {
 	case model.RelationshipAttrFollowing: // 已经关注
 		// 朋友关系
-		ur.RelationshipAttr = model.SetAttr(ur.RelationshipAttr, model.RelationshipAttrFriend)
-		rr.RelationshipAttr = model.SetAttr(rr.RelationshipAttr, model.RelationshipAttrFriend)
 		friend = true
 	}
 
@@ -124,10 +130,6 @@ func (s *AddFollowingService) Run(req *user.AddFollowingReq) (resp *user.AddFoll
 			}
 		}
 
-		if err = global.UserDal.UpdateMidRelation(s.ctx, uid, rid, model.RelationshipAttrFollowing, maxFollowerCount); err != nil {
-			return nil, err
-		}
-
 		umsg.CountChange[model.TypeFollowingCount] = 1
 		rmsg.CountChange[model.TypeFollowerCount] = 1
 		if friend {
@@ -139,11 +141,9 @@ func (s *AddFollowingService) Run(req *user.AddFollowingReq) (resp *user.AddFoll
 
 	go func() {
 		for i := 1; i <= 10; i++ {
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			defer cancel()
-			if err = global.UserRelevantCountProducer.WriteMessages(ctx, kafka.Message{
+			if err = global.UserRelevantCountProducer.WriteMessages(context.Background(), kafka.Message{
 				Key:   umsg.GetUserRelevantCountMessageKey(),
-				Value: umsg.Json(),
+				Value: umsg.Marshal(),
 			}); err != nil {
 				klog.Errorf("global.UserRelevantCountProducer.WriteMessages(%d) err:%v", umsg.GetUserRelevantCountMessageKey(), err)
 				time.Sleep(1 * time.Second)
@@ -152,11 +152,9 @@ func (s *AddFollowingService) Run(req *user.AddFollowingReq) (resp *user.AddFoll
 			break
 		}
 		for i := 1; i <= 10; i++ {
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			defer cancel()
-			if err = global.UserRelevantCountProducer.WriteMessages(ctx, kafka.Message{
+			if err = global.UserRelevantCountProducer.WriteMessages(context.Background(), kafka.Message{
 				Key:   rmsg.GetUserRelevantCountMessageKey(),
-				Value: rmsg.Json(),
+				Value: rmsg.Marshal(),
 			}); err != nil {
 				klog.Errorf("global.UserRelevantCountProducer.WriteMessages(%d) err:%v", umsg.GetUserRelevantCountMessageKey(), err)
 				time.Sleep(1 * time.Second)

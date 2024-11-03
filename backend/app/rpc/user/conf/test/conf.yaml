@@ -54,7 +54,7 @@ mysql:
 
 user_relation_kafka_writer:
   brokers:
-    - "localhost:9092"
+    - "127.0.0.1:9092"
   topic: "user_relation"
   enable_local_order: true
   max_attempts: 10
@@ -69,8 +69,8 @@ user_relation_kafka_writer:
 
 user_relevant_count_writer:
   brokers:
-    - "localhost:9092"
-  topic: "user_relation"
+    - "localhost:9093"
+  topic: "user_relevant_count"
   enable_local_order: true
   max_attempts: 10
   batch_size: 100
